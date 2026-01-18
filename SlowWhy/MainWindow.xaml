@@ -1,107 +1,79 @@
 ﻿<Window x:Class="SlowWhy.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SlowWhy" 
-        Height="650" Width="900" 
+        Title="SlowWhy System Tool" 
+        Height="500" Width="400" 
         WindowStartupLocation="CenterScreen"
-        Background="#1E1E1E">
+        Background="#F0F0F0" ResizeMode="CanMinimize">
 
-    <Grid Margin="20">
+    <Window.Resources>
+        <Style x:Key="SystemPanelStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F9F9F9"/>
+                    <Setter Property="BorderBrush" Value="#0078D7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="SYSTEM STATUS PANEL" 
-                   Grid.Row="0" Foreground="White" FontSize="28" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,10,0,20">
-            <TextBlock.Effect>
-                <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.5"/>
-            </TextBlock.Effect>
-        </TextBlock>
+        <Border Grid.Row="0" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Margin="0,0,0,10" Padding="0,0,0,5">
+            <TextBlock Text="Sistem Durumu" FontSize="16" FontWeight="SemiBold" Foreground="#333"/>
+        </Border>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" x:Name="MainDashboard">
+            <StackPanel>
+                <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="CPU_Click">
+                    <Grid>
+                        <TextBlock Text="İşlemci (CPU)" VerticalAlignment="Center" Foreground="#555"/>
+                        <TextBlock x:Name="txtCpu" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                    </Grid>
+                </Border>
 
-            <Border Grid.Row="0" Grid.Column="0" CornerRadius="15" Margin="8" Cursor="Hand" MouseLeftButtonDown="CPU_Click">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="#2D2D30"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#3D3D45"/>
-                                <Setter Property="BorderBrush" Value="#00BFFF"/>
-                                <Setter Property="BorderThickness" Value="1"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
+                <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="Ram_Click">
+                    <Grid>
+                        <TextBlock Text="Bellek (RAM)" VerticalAlignment="Center" Foreground="#555"/>
+                        <TextBlock x:Name="txtRam" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#28A745"/>
+                    </Grid>
+                </Border>
 
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="İŞLEMCİ (CPU)" Foreground="#AAAAAA" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtCpu" Text="---" Foreground="#FF5C5C" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    <TextBlock Text="Usage Percentage" Foreground="#666666" HorizontalAlignment="Center" FontSize="11"/>
-                </StackPanel>
-            </Border>
+                <Border Style="{StaticResource SystemPanelStyle}">
+                    <Grid>
+                        <TextBlock Text="Grafik (GPU)" VerticalAlignment="Center" Foreground="#555"/>
+                        <TextBlock x:Name="txtGpu" Text="---" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#666" TextWrapping="Wrap" MaxWidth="200" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
 
-            <Border Grid.Row="0" Grid.Column="1" Background="#2D2D30" CornerRadius="15" Margin="8">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="EMPTY RAM" Foreground="#AAAAAA" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtRam" Text="---" Foreground="#4CD964" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    <TextBlock Text="Available Space" Foreground="#666666" HorizontalAlignment="Center" FontSize="11"/>
-                </StackPanel>
-            </Border>
+                <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="DiskCard_Click">
+                    <Grid>
+                        <TextBlock Text="Yerel Disk (C:)" VerticalAlignment="Center" Foreground="#555"/>
+                        <TextBlock x:Name="txtDisk" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#D13438"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
 
-            <Border Grid.Row="1" Grid.Column="0" Background="#2D2D30" CornerRadius="15" Margin="8">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="GRAPHICS CARD (GPU)" Foreground="#AAAAAA" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtGpu" Text="---" Foreground="#FFD700" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
-                    <TextBlock Text="Model Information" Foreground="#666666" HorizontalAlignment="Center" FontSize="11"/>
-                </StackPanel>
-            </Border>
+        <ContentControl x:Name="PagesContainer" Grid.Row="1" Visibility="Collapsed"/>
 
-            <Border Grid.Row="1" Grid.Column="1" 
-                    CornerRadius="15" Margin="8"
-                    Cursor="Hand"
-                    MouseLeftButtonDown="DiskCard_Click">
-
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="#2D2D30"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#3D3D45"/>
-                                <Setter Property="BorderBrush" Value="#00BFFF"/>
-                                <Setter Property="BorderThickness" Value="1"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="DISK STATUS (C:)" Foreground="#AAAAAA" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="txtDisk" Text="---" Foreground="#00BFFF" FontSize="40" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    <TextBlock Text="Free Space" Foreground="#666666" HorizontalAlignment="Center" FontSize="11" FontStyle="Italic"/>
-                </StackPanel>
-            </Border>
-        </Grid>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,10">
-            <Button x:Name="btnRamClear" Content="Clean RAM" Height="50" Width="200" Background="#28A745" Foreground="White" FontWeight="Bold" Click="btnRamClear_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="25"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
-        </StackPanel>
+        <Button x:Name="btnRamClear" Grid.Row="2" Content="Quick Clean" Height="30" Margin="0,10,0,0" Background="#E1E1E1" Foreground="#333" BorderBrush="#ADADAD" BorderThickness="1" Click="btnRamClear_Click"/>
     </Grid>
 </Window>

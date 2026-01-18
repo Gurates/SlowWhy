@@ -14,6 +14,7 @@ namespace SlowWhy
         private DispatcherTimer timer;
         private PerformanceCounter cpuCounter;
         private PerformanceCounter ramCounter;
+        private double freeSpaceGb;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
@@ -79,7 +80,7 @@ namespace SlowWhy
                 DriveInfo cDrive = new DriveInfo("C");
                 if (cDrive.IsReady)
                 {
-                    double freeSpaceGb = cDrive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0);
+                    freeSpaceGb = cDrive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0);
                     txtDisk.Text = $"{freeSpaceGb:F0} GB";
                 }
             }
@@ -88,17 +89,17 @@ namespace SlowWhy
             // CPU Color
             if (cpuValue > 80) txtCpu.Foreground = Brushes.Red;
             else if (cpuValue > 50) txtCpu.Foreground = Brushes.Orange;
-            else txtCpu.Foreground = Brushes.LightGreen;
-        }
+            else txtCpu.Foreground = Brushes.Green;
 
-        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MessageBox.Show("Details");
-        }
+            // Disk Color
+            if (freeSpaceGb < 30) txtDisk.Foreground = Brushes.Red;
+            else if (freeSpaceGb < 50) txtDisk.Foreground = Brushes.Orange;
+            else txtDisk.Foreground = Brushes.Green;
 
-        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MessageBox.Show("Cpu Informations");
+            // Ram Color
+            if(ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
+            else if (ramValueMb < 4096) txtRam.Foreground = Brushes.Orange;
+            else txtRam.Foreground = Brushes.Green;
         }
 
         private void btnRamClear_Click(object sender, RoutedEventArgs e)
@@ -112,7 +113,27 @@ namespace SlowWhy
                     try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
                 }
                 btnRamClear.Content = "Clean RAM";
+                MessageBox.Show("Ram Clean");
             });
+        }
+
+        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainDashboard.Visibility = Visibility.Collapsed;
+            PagesContainer.Visibility = Visibility.Visible;
+            PagesContainer.Content = new Disk();
+        }
+
+        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageBox.Show("Cpu Informations");
+        }
+
+        private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainDashboard.Visibility = Visibility.Collapsed;
+            PagesContainer.Visibility = Visibility.Visible;
+            PagesContainer.Content = new Ram();
         }
     }
 }
