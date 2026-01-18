@@ -15,7 +15,7 @@
 
         <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
             <Grid>
-                <Button x:Name="btnBack" Content="← Geri" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
+                <Button x:Name="btnBack" Content="← Back" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
                 <TextBlock Text="Memory Management" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#333"/>
             </Grid>
         </Border>
@@ -35,7 +35,7 @@
 
         <Border Grid.Row="2" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="15">
             <Button x:Name="btnRamClear" 
-                    Content="Belleği Temizle" 
+                    Content="Clean Ram" 
                     Height="35" 
                     Background="#0078D7" 
                     Foreground="White" 

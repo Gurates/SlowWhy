@@ -10,17 +10,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
             <Grid>
-                <Button x:Name="btnBack" Content="← Geri" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
-                <TextBlock Text="Dosya Gezgini (C:\)" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#333"/>
+                <Button x:Name="btnBack" Content="← Back" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
+                <TextBlock Text="Disk Analysis (App &amp; Files)" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#333" FontSize="11"/>
             </Grid>
         </Border>
 
         <Grid Grid.Row="1" Margin="10">
-            <DataGrid x:Name="dgFiles" 
+            <DataGrid x:Name="dgItems" 
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
                       Background="White" 
@@ -30,17 +31,41 @@
                       GridLinesVisibility="Horizontal"
                       HorizontalGridLinesBrush="#E0E0E0"
                       HeadersVisibility="Column"
-                      RowHeight="25"
-                      FontSize="12">
+                      RowHeight="28"
+                      FontSize="11"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="2*"/>
-                    <DataGridTextColumn Header="Size" Binding="{Binding FileSize}" Width="1*"/>
-                    <DataGridTextColumn Header="Path" Binding="{Binding FullPath}" Width="3*"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="80" FontWeight="Bold"/>
+                    <DataGridTextColumn Header="Size" Binding="{Binding DisplaySize}" Width="80"/>
+                    <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="300"/>
                 </DataGrid.Columns>
             </DataGrid>
 
-            <TextBlock x:Name="txtLoading" Text="Receiving data..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888" Visibility="Collapsed"/>
+            <StackPanel x:Name="pnlLoading" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+                <TextBlock Text="Scanning the system..." Foreground="#0078D7" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Text="(Searching for applications and large files.)" Foreground="#888" FontSize="10" HorizontalAlignment="Center"/>
+            </StackPanel>
         </Grid>
+
+        <Border Grid.Row="2" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="10">
+            <Button x:Name="btnScan" 
+                    Content="Scan" 
+                    Height="35" 
+                    Background="#0078D7" 
+                    Foreground="White" 
+                    BorderThickness="0" 
+                    FontWeight="SemiBold"
+                    Cursor="Hand"
+                    Click="btnScan_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="2"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Border>
     </Grid>
 </UserControl>

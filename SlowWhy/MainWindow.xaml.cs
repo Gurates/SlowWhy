@@ -15,6 +15,9 @@ namespace SlowWhy
         private PerformanceCounter cpuCounter;
         private PerformanceCounter ramCounter;
         private double freeSpaceGb;
+        private float previousRam;
+        private float ramValueMb;
+        private float currentRam;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
@@ -71,7 +74,7 @@ namespace SlowWhy
             txtCpu.Text = $"%{cpuValue:F0}";
 
             //RAM
-            float ramValueMb = ramCounter.NextValue();
+            ramValueMb = ramCounter.NextValue();
             txtRam.Text = $"{ramValueMb / 1024.0:F2} GB";
 
             //DISK (C)
@@ -102,6 +105,14 @@ namespace SlowWhy
             else txtRam.Foreground = Brushes.Green;
         }
 
+        private float ramDiffrence(float newRamValue)
+        {
+            previousRam = ramValueMb;
+            currentRam = newRamValue;
+            float delta = currentRam - previousRam;
+            return delta;
+        }
+
         private void btnRamClear_Click(object sender, RoutedEventArgs e)
         {
             btnRamClear.Content = "Cleaning...";
@@ -113,7 +124,11 @@ namespace SlowWhy
                     try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
                 }
                 btnRamClear.Content = "Clean RAM";
-                MessageBox.Show("Ram Clean");
+
+                float newRam = ramCounter.NextValue();
+                float diffrence = ramDiffrence(newRam);
+                float diffrenceGB = diffrence / 1024;
+                MessageBox.Show($"{diffrenceGB:F2}GB Evacuated");
             });
         }
 

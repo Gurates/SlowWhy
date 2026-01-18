@@ -37,7 +37,7 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Margin="0,0,0,10" Padding="0,0,0,5">
-            <TextBlock Text="Sistem Durumu" FontSize="16" FontWeight="SemiBold" Foreground="#333"/>
+            <TextBlock Text="System Status" FontSize="16" FontWeight="SemiBold" Foreground="#333"/>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" x:Name="MainDashboard">
@@ -74,6 +74,6 @@
 
         <ContentControl x:Name="PagesContainer" Grid.Row="1" Visibility="Collapsed"/>
 
-        <Button x:Name="btnRamClear" Grid.Row="2" Content="Quick Clean" Height="30" Margin="0,10,0,0" Background="#E1E1E1" Foreground="#333" BorderBrush="#ADADAD" BorderThickness="1" Click="btnRamClear_Click"/>
+        <Button x:Name="btnRamClear" Grid.Row="2" Content="Quick Cleani" Height="30" Margin="0,10,0,0" Background="#E1E1E1" Foreground="#333" BorderBrush="#ADADAD" BorderThickness="1" Click="btnRamClear_Click"/>
     </Grid>
 </Window>
