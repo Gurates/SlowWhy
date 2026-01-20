@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Management;
 using System.IO;
+using LibreHardwareMonitor.Hardware;
 
 namespace SlowWhy
 {
@@ -18,6 +19,8 @@ namespace SlowWhy
         private float previousRam;
         private float ramValueMb;
         private float currentRam;
+        private Computer _computer;
+        private float rpm;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
@@ -28,6 +31,21 @@ namespace SlowWhy
             InitializeApp();
             GetStaticHardwareInfo();
             systemStatus();
+
+            _computer = new Computer()
+            {
+                IsCpuEnabled = true,
+                IsGpuEnabled = true,
+                IsMemoryEnabled = true,
+                IsMotherboardEnabled = true,
+                IsControllerEnabled = true,
+                IsNetworkEnabled = true,
+                IsStorageEnabled = true
+            };
+            _computer.Open();
+            this.Closed += (s, e) =>
+            timer.Stop();
+            _computer.Close();
         }
 
         private void InitializeApp()
@@ -103,6 +121,12 @@ namespace SlowWhy
             if(ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
             else if (ramValueMb < 4096) txtRam.Foreground = Brushes.Orange;
             else txtRam.Foreground = Brushes.Green;
+
+            // Fan
+            FanSpeed();
+            if (rpm > 3000) pbFan.Foreground = Brushes.Red;
+            else if (rpm > 2000) pbFan.Foreground = Brushes.Orange;
+            else pbFan.Foreground = Brushes.Green;
         }
 
         private float ramDiffrence(float newRamValue)
@@ -141,7 +165,9 @@ namespace SlowWhy
 
         private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MessageBox.Show("Cpu Informations");
+            MainDashboard.Visibility = Visibility.Collapsed;
+            PagesContainer.Visibility = Visibility.Visible;
+            PagesContainer.Content = new CPU();
         }
 
         private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -149,6 +175,39 @@ namespace SlowWhy
             MainDashboard.Visibility = Visibility.Collapsed;
             PagesContainer.Visibility = Visibility.Visible;
             PagesContainer.Content = new Ram();
+        }
+
+        private void GPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MainDashboard.Visibility = Visibility.Collapsed;
+            PagesContainer.Visibility = Visibility.Visible;
+            PagesContainer.Content = new GPU();
+        }
+
+
+        private void FanSpeed()
+        {
+            if (_computer == null) return;
+
+            foreach(IHardware hardware in _computer.Hardware)
+            {
+                if (hardware == null) continue;
+                hardware.Update();
+                foreach(var sensor in hardware.Sensors)
+                {
+                    if (sensor.SensorType == SensorType.Fan)
+                    {
+                        rpm = sensor.Value ?? 0;
+
+                        if (rpm > 0)
+                        {
+                            txtFan.Text = $"{rpm:F0} RPM";
+                            pbFan.Value = rpm;
+                        }
+                        return;
+                    }
+                }
+            }
         }
     }
 }

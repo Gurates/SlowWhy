@@ -13,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Management;
@@ -21,17 +20,18 @@ using System.IO;
 
 namespace SlowWhy
 {
-    /// <summary>
-    /// UserControl1.xaml etkileşim mantığı
-    /// </summary>
     public partial class Ram : UserControl
     {
-
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
 
         private PerformanceCounter ramCounter;
         private DispatcherTimer timer;
+
+        private float previousRam;
+        private float ramValueMb;
+        private float currentRam;
+
         public Ram()
         {
             InitializeComponent();
@@ -54,7 +54,7 @@ namespace SlowWhy
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            float ramValueMb = ramCounter.NextValue();
+            ramValueMb = ramCounter.NextValue();
             txtRam.Text = $"{ramValueMb / 1024.0:F2} GB";
         }
 
@@ -69,18 +69,46 @@ namespace SlowWhy
             }
         }
 
-        private void btnRamClear_Click(object sender, RoutedEventArgs e)
+        private float ramDiffrence(float newRamValue)
         {
-            btnRamClear.Content = "Cleaning...";
-            Dispatcher.InvokeAsync(() =>
+            previousRam = ramValueMb;
+            currentRam = newRamValue;
+            float delta = currentRam - previousRam;
+            return delta;
+        }
+
+        private async void btnRamClear_Click(object sender, RoutedEventArgs e)
+        {
+            btnRamClear.IsEnabled = false;
+            btnRamClear.Content = "Optimizing...";
+
+            await Task.Run(() =>
             {
-                Process[] processes = Process.GetProcesses();
-                foreach (Process p in processes)
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
+                GC.WaitForPendingFinalizers();
+
+                var processes = Process.GetProcesses();
+                foreach (var p in processes)
                 {
-                    try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
+                    try
+                    {
+                        if (!p.HasExited)
+                        {
+                            EmptyWorkingSet(p.Handle);
+                        }
+                    }
+                    catch
+                    {
+                    }
                 }
-                btnRamClear.Content = "Clean RAM";
             });
+
+            btnRamClear.IsEnabled = true;
+            btnRamClear.Content = "Clean RAM";
+            float newRam = ramCounter.NextValue();
+            float diffrence = ramDiffrence(newRam);
+            float diffrenceGB = diffrence / 1024;
+            MessageBox.Show($"{diffrenceGB:F2}GB Evacuated");
         }
     }
 }
