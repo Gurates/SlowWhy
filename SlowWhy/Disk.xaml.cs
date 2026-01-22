@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
+using System.Windows.Media.Animation;
 
 namespace SlowWhy
 {
@@ -26,12 +28,59 @@ namespace SlowWhy
             }
         }
 
+        private void MenuItem_OpenLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = dgItems.SelectedItem as DiskItemModel;
+            if (selected == null) return;
+
+            try
+            {
+                string pathToOpen = selected.Path;
+
+                if (selected.Type == "App")
+                {
+                    MessageBox.Show("Application location is not available in registry.", "Info");
+                    return;
+                }
+
+                if (selected.Type == "File")
+                {
+                    string fullPath = Path.Combine(selected.Path, selected.Name);
+                    if (File.Exists(fullPath))
+                    {
+                        Process.Start("explorer.exe", $"/select,\"{fullPath}\"");
+                        return;
+                    }
+                }
+
+                if (Directory.Exists(pathToOpen))
+                {
+                    Process.Start("explorer.exe", pathToOpen);
+                }
+                else
+                {
+                    MessageBox.Show($"Path does not exist:\n{pathToOpen}", "Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Cannot open location:\n{ex.Message}", "Error");
+            }
+        }
+
         private async void btnScan_Click(object sender, RoutedEventArgs e)
         {
             btnScan.IsEnabled = false;
-            btnScan.Content = "Analyzing...";
+            btnScan.Content = "Scanning...";
+            txtStatus.Text = "Scanning system files...";
             pnlLoading.Visibility = Visibility.Visible;
             dgItems.ItemsSource = null;
+
+            // progressbar
+            Duration duration = new Duration(TimeSpan.FromSeconds(25));
+            DoubleAnimation doubleAnimation = new DoubleAnimation(0.0, 100.0, duration);
+            doubleAnimation.FillBehavior = FillBehavior.HoldEnd;
+            progressBar1.BeginAnimation(ProgressBar.ValueProperty, doubleAnimation);
 
             try
             {
@@ -40,6 +89,8 @@ namespace SlowWhy
                 dgItems.ItemsSource = results.OrderByDescending(x => x.RawSize).ToList();
 
                 pnlLoading.Visibility = Visibility.Collapsed;
+                progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
+                progressBar1.Value = 100;
                 MessageBox.Show($"{results.Count} Number of large pieces of content found.");
             }
             catch (Exception ex)
@@ -52,6 +103,8 @@ namespace SlowWhy
                 btnScan.IsEnabled = true;
                 btnScan.Content = "Scan";
                 pnlLoading.Visibility = Visibility.Collapsed;
+                progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
+                progressBar1.Value = 100;
             }
         }
 

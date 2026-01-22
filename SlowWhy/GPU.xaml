@@ -101,16 +101,6 @@
                         </StackPanel>
                     </Border>
                 </Grid>
-
-                <TextBlock Text="* Temperature &amp; Fan data requires admin rights." 
-                           Foreground="#999" 
-                           FontSize="11" 
-                           HorizontalAlignment="Center" 
-                           FontStyle="Italic"
-                           TextWrapping="Wrap"
-                           TextAlignment="Center"
-                           Margin="0,0,0,10"/>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>

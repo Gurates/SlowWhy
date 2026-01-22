@@ -36,11 +36,8 @@ namespace SlowWhy
             {
                 IsCpuEnabled = true,
                 IsGpuEnabled = true,
-                IsMemoryEnabled = true,
                 IsMotherboardEnabled = true,
                 IsControllerEnabled = true,
-                IsNetworkEnabled = true,
-                IsStorageEnabled = true
             };
             _computer.Open();
             this.Closed += (s, e) =>
@@ -126,6 +123,7 @@ namespace SlowWhy
             FanSpeed();
             if (rpm > 3000) pbFan.Foreground = Brushes.Red;
             else if (rpm > 2000) pbFan.Foreground = Brushes.Orange;
+            else if(rpm == 0) pbFan.Foreground = Brushes.Green;
             else pbFan.Foreground = Brushes.Green;
         }
 

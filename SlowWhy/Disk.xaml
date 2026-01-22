@@ -11,6 +11,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
@@ -42,11 +43,16 @@
                     <DataGridTextColumn Header="Size" Binding="{Binding DisplaySize}" Width="80"/>
                     <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="300"/>
                 </DataGrid.Columns>
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="📂 Open Location" Click="MenuItem_OpenLocation_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
             </DataGrid>
 
             <StackPanel x:Name="pnlLoading" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
-                <TextBlock Text="Scanning the system..." Foreground="#0078D7" FontWeight="Bold" HorizontalAlignment="Center"/>
-                <TextBlock Text="(Searching for applications and large files.)" Foreground="#888" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Text="Scanning..." Foreground="#0078D7" FontWeight="Bold" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
@@ -67,5 +73,18 @@
                 </Button.Resources>
             </Button>
         </Border>
+
+        <StatusBar Grid.Row="3" Name="sbar" VerticalAlignment="Bottom" Background="#EFEFEF" BorderBrush="#CCC" BorderThickness="0,1,0,0">
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatus" Text="Ready" FontSize="11" Foreground="#444"/>
+            </StatusBarItem>
+
+            <Separator/>
+
+            <StatusBarItem>
+                <ProgressBar x:Name="progressBar1" Width="120" Height="15" Minimum="0" Maximum="100" />
+            </StatusBarItem>
+        </StatusBar>
+
     </Grid>
 </UserControl>
