@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -102,6 +103,27 @@ namespace SlowWhy
             {
                 mainWindow.MainDashboard.Visibility = Visibility.Visible;
                 mainWindow.PagesContainer.Visibility = Visibility.Collapsed;
+            }
+        }
+
+
+        private void CpuAppClose_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = dgProcesses.SelectedItem as CpuProcessModel;
+            if (selected == null) return;
+
+            try
+            {
+                var procces = System.Diagnostics.Process.GetProcessById(selected.Id);
+                procces.Kill(true);
+                procces.WaitForExit(1000);
+                (dgProcesses.ItemsSource as IList)?.Remove(selected);
+            }
+            catch (Exception ex)
+            {
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
     }

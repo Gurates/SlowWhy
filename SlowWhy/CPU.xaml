@@ -81,6 +81,12 @@
                     <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="0.8*"/>
                     <DataGridTextColumn Header="CPU %" Binding="{Binding Usage}" Width="1*" FontWeight="Bold"/>
                 </DataGrid.Columns>
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Close" Click="CpuAppClose_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
             </DataGrid>
         </Grid>
     </Grid>

@@ -182,6 +182,36 @@ namespace SlowWhy
             PagesContainer.Content = new GPU();
         }
 
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void MenuDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            PagesContainer.Visibility = Visibility.Collapsed;
+            MainDashboard.Visibility = Visibility.Visible;
+            PagesContainer.Content = null;
+        }
+
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("test");
+        }
+
+        private void MenuRefresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void MenuGithub_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Gurates/SlowWhy",
+                UseShellExecute = true
+            });
+        }
+
 
         private void FanSpeed()
         {

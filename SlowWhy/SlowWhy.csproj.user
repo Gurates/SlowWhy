@@ -2,15 +2,11 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="Disk.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Update="Disk.xaml.cs" />
     <Compile Update="Ram.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="CPU.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Update="CPU.xaml.cs" />
     <Compile Update="GPU.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

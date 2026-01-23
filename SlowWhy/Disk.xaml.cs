@@ -36,7 +36,6 @@ namespace SlowWhy
             try
             {
                 string pathToOpen = selected.Path;
-
                 if (selected.Type == "App")
                 {
                     MessageBox.Show("Application location is not available in registry.", "Info");
