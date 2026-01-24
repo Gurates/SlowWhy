@@ -6,14 +6,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
 
-    <Grid Background="#F0F0F0">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
+        <Border Grid.Row="0" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Padding="10">
             <Grid>
                 <Button x:Name="btnBack" 
                         Content="← Back" 
@@ -21,7 +25,7 @@
                         Width="50" Height="25" 
                         Background="Transparent" 
                         BorderThickness="0" 
-                        Foreground="#0078D7" 
+                        Foreground="{DynamicResource AccentBrush}" 
                         Cursor="Hand"
                         Click="btnBack_Click"/>
 
@@ -29,16 +33,28 @@
                            HorizontalAlignment="Center" 
                            VerticalAlignment="Center" 
                            FontWeight="SemiBold" 
-                           Foreground="#333"/>
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" Background="White" Margin="10" Padding="15" BorderBrush="#D0D0D0" BorderThickness="1">
+        <Border Grid.Row="1" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                Margin="10" 
+                Padding="15" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="1">
             <StackPanel>
                 <Grid>
-                    <TextBlock Text="Total Utilization" Foreground="#666" VerticalAlignment="Bottom" FontSize="12"/>
+                    <TextBlock Text="Total Utilization" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               VerticalAlignment="Bottom" 
+                               FontSize="12"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock x:Name="txtTotalUsage" Text="0%" FontSize="36" FontWeight="Normal" Foreground="#0078D7"/>
+                        <TextBlock x:Name="txtTotalUsage" 
+                                   Text="0%" 
+                                   FontSize="36" 
+                                   FontWeight="Normal" 
+                                   Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
                 </Grid>
 
@@ -48,8 +64,8 @@
                              Maximum="100" 
                              Margin="0,5,0,0" 
                              BorderThickness="0"
-                             Background="#E0E0E0"
-                             Foreground="#0078D7"/>
+                             Background="{DynamicResource ProgressBackgroundBrush}"
+                             Foreground="{DynamicResource AccentBrush}"/>
             </StackPanel>
         </Border>
 
@@ -59,22 +75,50 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Top Processes" FontSize="12" Foreground="#666" Margin="0,0,0,5"/>
+            <TextBlock Text="Top Processes" 
+                       FontSize="12" 
+                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                       Margin="0,0,0,5"/>
 
             <DataGrid x:Name="dgProcesses" 
                       Grid.Row="1"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
-                      Background="White" 
-                      Foreground="#333"
-                      BorderBrush="#ADADAD"
+                      Background="{DynamicResource CardBackgroundBrush}" 
+                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      BorderBrush="{DynamicResource BorderBrush}"
                       BorderThickness="1"
                       GridLinesVisibility="Horizontal"
-                      HorizontalGridLinesBrush="#E0E0E0"
+                      HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
                       HeadersVisibility="Column"
                       RowHeight="28"
                       FontSize="12"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      RowBackground="{DynamicResource CardBackgroundBrush}"
+                      AlternatingRowBackground="{DynamicResource CardBackgroundBrush}">
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Setter Property="Padding" Value="8,5"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Process Name" Binding="{Binding Name}" Width="2*"/>

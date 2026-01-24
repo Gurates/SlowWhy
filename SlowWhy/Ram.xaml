@@ -6,42 +6,195 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
 
-    <Grid Background="#F0F0F0">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
+        <Border Grid.Row="0" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Padding="10">
             <Grid>
-                <Button x:Name="btnBack" Content="← Back" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
-                <TextBlock Text="Memory Management" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#333"/>
+                <Button x:Name="btnBack" 
+                        Content="← Back" 
+                        HorizontalAlignment="Left" 
+                        Width="50" Height="25" 
+                        Background="Transparent" 
+                        BorderThickness="0" 
+                        Foreground="{DynamicResource AccentBrush}" 
+                        Cursor="Hand"
+                        Click="btnBack_Click"/>
+
+                <TextBlock Text="Memory (RAM) Optimizer" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           FontSize="11"/>
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="1" Margin="20" VerticalAlignment="Center">
-            <Border Background="White" BorderBrush="#D0D0D0" BorderThickness="1" Padding="20">
-                <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="Available RAM" Foreground="#666" FontSize="12" HorizontalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,5">
-                        <TextBlock x:Name="txtRam" Text="---" Foreground="#333" FontSize="40" FontWeight="Normal"/>
-                        <TextBlock Text="GB" Foreground="#666" FontSize="14" VerticalAlignment="Bottom" Margin="5,0,0,8"/>
+        <Border Grid.Row="1" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                Margin="10,10,10,0" 
+                Padding="15" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="1">
+            <StackPanel>
+                <Grid>
+                    <TextBlock Text="Available Memory" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               VerticalAlignment="Bottom" 
+                               FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock x:Name="txtRam" 
+                                   Text="0.00 GB" 
+                                   FontSize="32" 
+                                   FontWeight="Normal" 
+                                   Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="System performance is good." Foreground="#0000" FontSize="11" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
 
-        <Border Grid.Row="2" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="15">
+        <Border Grid.Row="2" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                Margin="10,10,10,0" 
+                Padding="15" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Cleaning Mode" 
+                           Foreground="{DynamicResource TextSecondaryBrush}" 
+                           FontSize="12" 
+                           Margin="0,0,0,8"/>
+                <ComboBox x:Name="cmbCleaningLevel" 
+                          SelectedIndex="0" 
+                          Height="35"
+                          FontSize="12"
+                          Background="{DynamicResource CardBackgroundBrush}"
+                          Foreground="{DynamicResource TextPrimaryBrush}"
+                          BorderBrush="{DynamicResource BorderBrush}">
+                    <ComboBoxItem>
+                        <StackPanel>
+                            <TextBlock Text="Safe (Recommended)" FontWeight="SemiBold" Foreground="#28A745"/>
+                            <TextBlock Text="Cache only • No performance impact" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel>
+                            <TextBlock Text="Medium" FontWeight="SemiBold" Foreground="#FFA500"/>
+                            <TextBlock Text="Cache + File system • Minimal impact" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel>
+                            <TextBlock Text="Aggressive" FontWeight="SemiBold" Foreground="#DC3545"/>
+                            <TextBlock Text="Everything • May slow apps temporarily" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                Margin="10,10,10,0" 
+                Padding="15" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="How it works:" 
+                               FontWeight="SemiBold" 
+                               Foreground="{DynamicResource TextPrimaryBrush}" 
+                               FontSize="12" 
+                               Margin="0,0,0,10"/>
+
+                    <TextBlock TextWrapping="Wrap" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               FontSize="11" 
+                               Margin="0,0,0,5">
+                        <Run Text="Safe Mode:" FontWeight="Bold"/>
+                        <Run Text=" Clears closed apps cache (1-2 GB)"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               FontSize="11" 
+                               Margin="0,0,0,5">
+                        <Run Text="Medium Mode:" FontWeight="Bold"/>
+                        <Run Text=" File system cache (1.5-2.5 GB)"/>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               FontSize="11" 
+                               Margin="0,0,0,10">
+                        <Run Text="Aggressive Mode:" FontWeight="Bold"/>
+                        <Run Text=" Running apps (2-4 GB, may slow)"/>
+                    </TextBlock>
+
+                    <Border Background="#FFF3CD" 
+                            Padding="8" 
+                            CornerRadius="3" 
+                            BorderBrush="#FFC107" 
+                            BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" Foreground="#856404" FontSize="10">
+                            <Run Text="Tip:" FontWeight="Bold"/>
+                            <Run Text=" Use Safe mode for daily use. Only use Aggressive before launching games."/>
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="4" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,1,0,0" 
+                Padding="10">
             <Button x:Name="btnRamClear" 
-                    Content="Clean Ram" 
-                    Height="35" 
-                    Background="#0078D7" 
+                    Content="Clean RAM" 
+                    Height="40" 
+                    Background="{DynamicResource AccentBrush}" 
                     Foreground="White" 
                     BorderThickness="0" 
-                    Click="btnRamClear_Click"
-                    Cursor="Hand"/>
+                    FontWeight="SemiBold"
+                    FontSize="13"
+                    Cursor="Hand"
+                    Click="btnRamClear_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" 
+                                            CornerRadius="3"
+                                            Padding="10,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#CCCCCC"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Border>
     </Grid>
 </UserControl>

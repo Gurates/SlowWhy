@@ -4,20 +4,21 @@
         Title="SlowWhy System Tool" 
         Height="580" Width="400" 
         WindowStartupLocation="CenterScreen"
-        Background="#F0F0F0" ResizeMode="CanMinimize">
+        Background="{DynamicResource BackgroundBrush}" 
+        ResizeMode="CanMinimize">
 
     <Window.Resources>
         <Style x:Key="SystemPanelStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="Padding" Value="10"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F9F9F9"/>
-                    <Setter Property="BorderBrush" Value="#0078D7"/>
+                    <Setter Property="Background" Value="{DynamicResource CardHoverBrush}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderHoverBrush}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -38,25 +39,43 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="5">
-            <MenuItem Header="_File" FontSize="12" Foreground="#333">
+        <Menu Grid.Row="0" 
+              Background="{DynamicResource MenuBackgroundBrush}" 
+              BorderBrush="{DynamicResource BorderBrush}" 
+              BorderThickness="0,0,0,1" 
+              Padding="5">
+            <MenuItem Header="_File" 
+                      FontSize="12" 
+                      Foreground="{DynamicResource TextPrimaryBrush}">
                 <Separator/>
                 <MenuItem Header="E_xit" Click="MenuExit_Click"/>
             </MenuItem>
 
-            <MenuItem Header="_View" FontSize="12" Foreground="#333">
+            <MenuItem Header="_View" 
+                      FontSize="12" 
+                      Foreground="{DynamicResource TextPrimaryBrush}">
                 <MenuItem Header="Dashboard" Click="MenuDashboard_Click"/>
+                <MenuItem x:Name="menuTheme" Header="Use Dark Theme" Click="themeSwitch"/>
                 <MenuItem Header="Refresh Data" Click="MenuRefresh_Click"/>
             </MenuItem>
 
-            <MenuItem Header="_Help" FontSize="12" Foreground="#333">
+            <MenuItem Header="_Help" 
+                      FontSize="12" 
+                      Foreground="{DynamicResource TextPrimaryBrush}">
                 <MenuItem Header="GitHub Repo" Click="MenuGithub_Click"/>
                 <MenuItem Header="About SlowWhy" Click="MenuAbout_Click"/>
             </MenuItem>
         </Menu>
 
-        <Border Grid.Row="1" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Margin="15,10,15,10" Padding="0,0,0,5">
-            <TextBlock Text="System Status" FontSize="16" FontWeight="SemiBold" Foreground="#333"/>
+        <Border Grid.Row="1" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Margin="15,10,15,10" 
+                Padding="0,0,0,5">
+            <TextBlock Text="System Status" 
+                       FontSize="16" 
+                       FontWeight="SemiBold" 
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
         </Border>
 
         <Grid Grid.Row="2" Margin="15,0,15,0">
@@ -64,42 +83,84 @@
                 <StackPanel>
                     <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="CPU_Click">
                         <Grid>
-                            <TextBlock Text="Processor (CPU)" VerticalAlignment="Center" Foreground="#555"/>
-                            <TextBlock x:Name="txtCpu" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                            <TextBlock Text="Processor (CPU)" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="txtCpu" 
+                                       Text="---" 
+                                       Style="{StaticResource ValueStyle}" 
+                                       HorizontalAlignment="Right" 
+                                       Foreground="#0078D7"/>
                         </Grid>
                     </Border>
 
                     <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="Ram_Click">
                         <Grid>
-                            <TextBlock Text="Memory (RAM)" VerticalAlignment="Center" Foreground="#555"/>
-                            <TextBlock x:Name="txtRam" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#28A745"/>
+                            <TextBlock Text="Memory (RAM)" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="txtRam" 
+                                       Text="---" 
+                                       Style="{StaticResource ValueStyle}" 
+                                       HorizontalAlignment="Right" 
+                                       Foreground="#28A745"/>
                         </Grid>
                     </Border>
 
                     <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="GPU_Click">
                         <Grid>
-                            <TextBlock Text="Graphics Card (GPU)" VerticalAlignment="Center" Foreground="#555"/>
-                            <TextBlock x:Name="txtGpu" Text="---" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#666" TextWrapping="Wrap" MaxWidth="200" TextAlignment="Right"/>
+                            <TextBlock Text="Graphics Card (GPU)" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="txtGpu" 
+                                       Text="---" 
+                                       FontSize="12" 
+                                       HorizontalAlignment="Right" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextTertiaryBrush}" 
+                                       TextWrapping="Wrap" 
+                                       MaxWidth="200" 
+                                       TextAlignment="Right"/>
                         </Grid>
                     </Border>
 
                     <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="DiskCard_Click">
                         <Grid>
-                            <TextBlock Text="Local Disk (C:)" VerticalAlignment="Center" Foreground="#555"/>
-                            <TextBlock x:Name="txtDisk" Text="---" Style="{StaticResource ValueStyle}" HorizontalAlignment="Right" Foreground="#D13438"/>
+                            <TextBlock Text="Local Disk (C:)" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="txtDisk" 
+                                       Text="---" 
+                                       Style="{StaticResource ValueStyle}" 
+                                       HorizontalAlignment="Right" 
+                                       Foreground="#D13438"/>
                         </Grid>
                     </Border>
 
                     <Border Style="{StaticResource SystemPanelStyle}">
                         <Grid>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="⚙" FontSize="16" Foreground="#555" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="Fan Speed" VerticalAlignment="Center" Foreground="#555" FontSize="13"/>
+                                <TextBlock Text="Fan Speed" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="{DynamicResource TextSecondaryBrush}" 
+                                           FontSize="13"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ProgressBar x:Name="pbFan" Width="30" Height="4" Value="0" Maximum="4500" Margin="0,0,10,0" Background="#E0E0E0" Foreground="#0078D7" BorderThickness="0"/>
-                                <TextBlock x:Name="txtFan" Text="0 RPM" Style="{StaticResource ValueStyle}" FontSize="16" Foreground="#D13438"/>
+                                <ProgressBar x:Name="pbFan" 
+                                             Width="30" 
+                                             Height="4" 
+                                             Value="0" 
+                                             Maximum="4500" 
+                                             Margin="0,0,10,0" 
+                                             Background="{DynamicResource ProgressBackgroundBrush}" 
+                                             Foreground="#0078D7" 
+                                             BorderThickness="0"/>
+                                <TextBlock x:Name="txtFan" 
+                                           Text="0 RPM" 
+                                           Style="{StaticResource ValueStyle}" 
+                                           FontSize="16" 
+                                           Foreground="#D13438"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -109,14 +170,28 @@
             <ContentControl x:Name="PagesContainer" Visibility="Collapsed"/>
         </Grid>
 
-        <Button x:Name="btnRamClear" Grid.Row="3" Content="Quick Clean Ram" Height="35" Margin="15,10,15,10" Background="#E1E1E1" Foreground="#333" BorderBrush="#ADADAD" BorderThickness="1" Click="btnRamClear_Click"/>
+        <Button x:Name="btnRamClear" 
+                Grid.Row="3" 
+                Content="Quick Clean RAM" 
+                Height="35" 
+                Margin="15,10,15,10" 
+                Background="{DynamicResource ButtonBackgroundBrush}" 
+                Foreground="{DynamicResource ButtonForegroundBrush}" 
+                BorderBrush="{DynamicResource ButtonBorderBrush}" 
+                BorderThickness="1" 
+                Click="btnRamClear_Click"
+                Cursor="Hand"/>
 
-        <StatusBar Grid.Row="4" Background="#F3F3F3" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="5,2">
+        <StatusBar Grid.Row="4" 
+                   Background="{DynamicResource StatusBarBrush}" 
+                   BorderBrush="{DynamicResource BorderBrush}" 
+                   BorderThickness="0,1,0,0" 
+                   Padding="5,2">
             <StatusBarItem HorizontalContentAlignment="Stretch">
                 <TextBlock x:Name="txtStatusUpdate" 
-                           Text="⚠️ Quick clean does not perform a deep RAM cleanup; for a deeper cleanup, go to the RAM tab." 
+                           Text="Quick clean does not perform a deep RAM cleanup; for a deeper cleanup, go to the RAM tab." 
                            FontSize="10" 
-                           Foreground="#666" 
+                           Foreground="{DynamicResource TextTertiaryBrush}" 
                            TextWrapping="Wrap"
                            TextAlignment="Center"/>
             </StatusBarItem>

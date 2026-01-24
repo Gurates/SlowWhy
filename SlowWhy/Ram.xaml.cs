@@ -58,6 +58,15 @@ namespace SlowWhy
         private const int SystemCombinePhysicalMemoryInformation = 130;
         #endregion
 
+        #region Cleaning Levels
+        public enum CleaningLevel
+        {
+            Safe,       // Sadece Native API (Önerilen)
+            Medium,     // Native API + File Cache
+            Aggressive  // Tümü (Working Sets dahil)
+        }
+        #endregion
+
         private PerformanceCounter ramCounter;
         private DispatcherTimer timer;
         private float previousRam;
@@ -109,6 +118,25 @@ namespace SlowWhy
 
         private async void btnRamClear_Click(object sender, RoutedEventArgs e)
         {
+            CleaningLevel selectedLevel = GetSelectedCleaningLevel();
+
+            string levelDescription = selectedLevel switch
+            {
+                CleaningLevel.Safe => "Safe Mode:\n- Clears cache only\n- No performance impact\n- ~1-2 GB freed",
+                CleaningLevel.Medium => "Medium Mode:\n- Clears cache + file system\n- Minimal impact\n- ~1.5-2.5 GB freed",
+                CleaningLevel.Aggressive => "Aggressive Mode:\n- Clears everything\n- May slow down apps\n- ~2-4 GB freed",
+                _ => ""
+            };
+
+            var result = MessageBox.Show(
+                $"{levelDescription}\n\nAre you sure you want to continue?",
+                "Confirm RAM Cleaning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if (result == MessageBoxResult.No) return;
+
             btnRamClear.IsEnabled = false;
             btnRamClear.Content = "Optimizing...";
 
@@ -120,25 +148,28 @@ namespace SlowWhy
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
 
-                ClearWorkingSets();
-
                 PurgeStandbyList();
-
                 FlushModifiedPageList();
-
                 CombineMemoryPages();
 
-                try
+                if (selectedLevel >= CleaningLevel.Medium)
                 {
-                    ClearStandbyCache();
+                    try
+                    {
+                        FlushFileSystemCache();
+                    }
+                    catch { }
                 }
-                catch { }
 
-                try
+                if (selectedLevel >= CleaningLevel.Aggressive)
                 {
-                    FlushFileSystemCache();
+                    ClearWorkingSets();
+                    try
+                    {
+                        ClearStandbyCache();
+                    }
+                    catch { }
                 }
-                catch { }
 
                 System.Threading.Thread.Sleep(500);
             });
@@ -150,21 +181,55 @@ namespace SlowWhy
             btnRamClear.IsEnabled = true;
             btnRamClear.Content = "Clean RAM";
 
-            MessageBox.Show($"{diffrenceGB:F2} GB Evacuated", "RAM Optimization Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            string modeText = selectedLevel switch
+            {
+                CleaningLevel.Safe => "Safe Mode",
+                CleaningLevel.Medium => "Medium Mode",
+                CleaningLevel.Aggressive => "Aggressive Mode",
+                _ => "Unknown"
+            };
+
+            MessageBox.Show(
+                $"{diffrenceGB:F2} GB Freed\n\nMode: {modeText}\nYour apps are running smoothly!",
+                "RAM Optimization Complete",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+
+        private CleaningLevel GetSelectedCleaningLevel()
+        {
+            if (cmbCleaningLevel.SelectedIndex == 0)
+                return CleaningLevel.Safe;
+            else if (cmbCleaningLevel.SelectedIndex == 1)
+                return CleaningLevel.Medium;
+            else
+                return CleaningLevel.Aggressive;
         }
 
         private void ClearWorkingSets()
         {
             var processes = Process.GetProcesses();
+
+            string[] protectedProcesses = {
+                "explorer", "dwm", "csrss", "winlogon", "services",
+                "lsass", "svchost", "System", "smss", "wininit"
+            };
+
+            const long minWorkingSet = 100 * 1024 * 1024;
+
             foreach (var p in processes)
             {
                 try
                 {
-                    if (!p.HasExited && p.Handle != IntPtr.Zero)
-                    {
-                        EmptyWorkingSet(p.Handle);
-                        SetProcessWorkingSetSize(p.Handle, new IntPtr(-1), new IntPtr(-1));
-                    }
+                    if (p.HasExited || p.Handle == IntPtr.Zero) continue;
+
+                    if (p.WorkingSet64 < minWorkingSet) continue;
+
+                    if (protectedProcesses.Any(x => p.ProcessName.ToLower().Contains(x))) continue;
+
+                    EmptyWorkingSet(p.Handle);
+                    SetProcessWorkingSetSize(p.Handle, new IntPtr(-1), new IntPtr(-1));
                 }
                 catch { }
                 finally

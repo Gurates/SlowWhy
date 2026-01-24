@@ -6,13 +6,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="450">
 
-    <Grid Background="#F0F0F0">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="15,10">
+        <Border Grid.Row="0" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Padding="15,10">
             <Grid>
                 <Button x:Name="btnBack" 
                         Content="← Back" 
@@ -20,7 +24,7 @@
                         Width="60" Height="28" 
                         Background="Transparent" 
                         BorderThickness="0" 
-                        Foreground="#0078D7" 
+                        Foreground="{DynamicResource AccentBrush}" 
                         FontWeight="SemiBold"
                         Cursor="Hand"
                         Click="btnBack_Click"/>
@@ -30,21 +34,39 @@
                            VerticalAlignment="Center" 
                            FontWeight="SemiBold" 
                            FontSize="14"
-                           Foreground="#333"/>
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
             </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="15">
 
-                <Border Background="White" Padding="20" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4" Margin="0,0,0,15">
+                <Border Background="{DynamicResource CardBackgroundBrush}" 
+                        Padding="20" 
+                        BorderBrush="{DynamicResource BorderBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="4" 
+                        Margin="0,0,0,15">
                     <StackPanel>
-                        <TextBlock x:Name="txtGpuName" Text="Loading GPU Name..." Foreground="#333" FontWeight="Bold" FontSize="15" Margin="0,0,0,15" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="txtGpuName" 
+                                   Text="Loading GPU Name..." 
+                                   Foreground="{DynamicResource TextPrimaryBrush}" 
+                                   FontWeight="Bold" 
+                                   FontSize="15" 
+                                   Margin="0,0,0,15" 
+                                   TextWrapping="Wrap"/>
 
                         <Grid Margin="0,0,0,5">
-                            <TextBlock Text="3D Usage" Foreground="#666" VerticalAlignment="Bottom" FontSize="13"/>
+                            <TextBlock Text="3D Usage" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       VerticalAlignment="Bottom" 
+                                       FontSize="13"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock x:Name="txtUsage" Text="0%" FontSize="36" FontWeight="Normal" Foreground="#0078D7"/>
+                                <TextBlock x:Name="txtUsage" 
+                                           Text="0%" 
+                                           FontSize="36" 
+                                           FontWeight="Normal" 
+                                           Foreground="{DynamicResource AccentBrush}"/>
                             </StackPanel>
                         </Grid>
 
@@ -53,8 +75,8 @@
                                      Value="0" 
                                      Maximum="100" 
                                      BorderThickness="0"
-                                     Background="#E0E0E0"
-                                     Foreground="#0078D7"/>
+                                     Background="{DynamicResource ProgressBackgroundBrush}"
+                                     Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
                 </Border>
 
@@ -70,33 +92,86 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Grid.Column="0" Background="White" Padding="15" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Border Grid.Row="0" Grid.Column="0" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            Padding="15" 
+                            BorderBrush="{DynamicResource BorderBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="4">
                         <StackPanel>
-                            <TextBlock Text="VRAM Memory" Foreground="#888" FontSize="11"/>
-                            <TextBlock x:Name="txtVramTotal" Text="-- GB" FontSize="18" FontWeight="SemiBold" Foreground="#333" Margin="0,5,0,0"/>
+                            <TextBlock Text="VRAM Memory" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       FontSize="11"/>
+                            <TextBlock x:Name="txtVramTotal" 
+                                       Text="-- GB" 
+                                       FontSize="18" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       Margin="0,5,0,0"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Grid.Column="2" Background="White" Padding="15" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Border Grid.Row="0" Grid.Column="2" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            Padding="15" 
+                            BorderBrush="{DynamicResource BorderBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="4">
                         <StackPanel>
-                            <TextBlock Text="Driver Version" Foreground="#888" FontSize="11"/>
-                            <TextBlock x:Name="txtDriver" Text="--" FontSize="12" FontWeight="SemiBold" Foreground="#333" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            <TextBlock Text="Driver Version" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       FontSize="11"/>
+                            <TextBlock x:Name="txtDriver" 
+                                       Text="--" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       Margin="0,5,0,0" 
+                                       TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="2" Grid.Column="0" Background="White" Padding="15" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Border Grid.Row="2" Grid.Column="0" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            Padding="15" 
+                            BorderBrush="{DynamicResource BorderBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="4">
                         <StackPanel>
-                            <TextBlock Text="Resolution" Foreground="#888" FontSize="11"/>
-                            <TextBlock x:Name="txtResolution" Text="-- x --" FontSize="14" FontWeight="SemiBold" Foreground="#333" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            <TextBlock Text="Resolution" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       FontSize="11"/>
+                            <TextBlock x:Name="txtResolution" 
+                                       Text="-- x --" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       Margin="0,5,0,0" 
+                                       TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="2" Grid.Column="2" Background="White" Padding="15" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Border Grid.Row="2" Grid.Column="2" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            Padding="15" 
+                            BorderBrush="{DynamicResource BorderBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="4">
                         <StackPanel>
-                            <TextBlock Text="Refresh Rate" Foreground="#888" FontSize="11"/>
+                            <TextBlock Text="Refresh Rate" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       FontSize="11"/>
                             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                <TextBlock x:Name="txtRefresh" Text="--" FontSize="20" FontWeight="SemiBold" Foreground="#28A745"/>
-                                <TextBlock Text="Hz" Foreground="#666" FontSize="12" VerticalAlignment="Bottom" Margin="3,0,0,4"/>
+                                <TextBlock x:Name="txtRefresh" 
+                                           Text="--" 
+                                           FontSize="20" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#28A745"/>
+                                <TextBlock Text="Hz" 
+                                           Foreground="{DynamicResource TextTertiaryBrush}" 
+                                           FontSize="12" 
+                                           VerticalAlignment="Bottom" 
+                                           Margin="3,0,0,4"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>

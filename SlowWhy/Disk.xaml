@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
 
-    <Grid Background="#F0F0F0">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -14,10 +14,28 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,0,0,1" Padding="10">
+        <Border Grid.Row="0" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" 
+                Padding="10">
             <Grid>
-                <Button x:Name="btnBack" Content="← Back" HorizontalAlignment="Left" Width="50" Height="25" Background="Transparent" BorderThickness="0" Foreground="#0078D7" Click="btnBack_Click" Cursor="Hand"/>
-                <TextBlock Text="Disk Analysis (App &amp; Files)" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#333" FontSize="11"/>
+                <Button x:Name="btnBack" 
+                        Content="← Back" 
+                        HorizontalAlignment="Left" 
+                        Width="50" 
+                        Height="25" 
+                        Background="Transparent" 
+                        BorderThickness="0" 
+                        Foreground="{DynamicResource AccentBrush}" 
+                        Click="btnBack_Click" 
+                        Cursor="Hand"/>
+                <TextBlock Text="Disk Analysis (App &amp; Files)" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextPrimaryBrush}" 
+                           FontSize="11"/>
             </Grid>
         </Border>
 
@@ -25,17 +43,42 @@
             <DataGrid x:Name="dgItems" 
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
-                      Background="White" 
-                      Foreground="#333"
-                      BorderBrush="#ADADAD"
+                      Background="{DynamicResource CardBackgroundBrush}" 
+                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      BorderBrush="{DynamicResource BorderBrush}"
                       BorderThickness="1"
                       GridLinesVisibility="Horizontal"
-                      HorizontalGridLinesBrush="#E0E0E0"
+                      HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
                       HeadersVisibility="Column"
                       RowHeight="28"
                       FontSize="11"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      RowBackground="{DynamicResource CardBackgroundBrush}"
+                      AlternatingRowBackground="{DynamicResource CardBackgroundBrush}">
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Setter Property="Padding" Value="8,5"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180"/>
@@ -46,43 +89,86 @@
 
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="📂 Open Location" Click="MenuItem_OpenLocation_Click"/>
+                        <MenuItem Header="Open Location" Click="MenuItem_OpenLocation_Click"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>
 
-            <StackPanel x:Name="pnlLoading" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
-                <TextBlock Text="Scanning..." Foreground="#0078D7" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel x:Name="pnlLoading" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center" 
+                        Visibility="Collapsed">
+                <TextBlock Text="Scanning..." 
+                           Foreground="{DynamicResource AccentBrush}" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
-        <Border Grid.Row="2" Background="White" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="10">
+        <Border Grid.Row="2" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,1,0,0" 
+                Padding="10">
             <Button x:Name="btnScan" 
                     Content="Scan" 
                     Height="35" 
-                    Background="#0078D7" 
+                    Background="{DynamicResource AccentBrush}" 
                     Foreground="White" 
                     BorderThickness="0" 
                     FontWeight="SemiBold"
                     Cursor="Hand"
                     Click="btnScan_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="2"/>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" 
+                                            CornerRadius="2"
+                                            Padding="10,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#CCCCCC"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
-                </Button.Resources>
+                </Button.Style>
             </Button>
         </Border>
 
-        <StatusBar Grid.Row="3" Name="sbar" VerticalAlignment="Bottom" Background="#EFEFEF" BorderBrush="#CCC" BorderThickness="0,1,0,0">
+        <StatusBar Grid.Row="3" 
+                   Name="sbar" 
+                   VerticalAlignment="Bottom" 
+                   Background="{DynamicResource StatusBarBrush}" 
+                   BorderBrush="{DynamicResource BorderBrush}" 
+                   BorderThickness="0,1,0,0">
             <StatusBarItem>
-                <TextBlock x:Name="txtStatus" Text="Ready" FontSize="11" Foreground="#444"/>
+                <TextBlock x:Name="txtStatus" 
+                           Text="Ready" 
+                           FontSize="11" 
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
             </StatusBarItem>
 
             <Separator/>
 
             <StatusBarItem>
-                <ProgressBar x:Name="progressBar1" Width="120" Height="15" Minimum="0" Maximum="100" />
+                <ProgressBar x:Name="progressBar1" 
+                             Width="120" 
+                             Height="15" 
+                             Minimum="0" 
+                             Maximum="100" 
+                             Background="{DynamicResource ProgressBackgroundBrush}"
+                             Foreground="{DynamicResource AccentBrush}"/>
             </StatusBarItem>
         </StatusBar>
 

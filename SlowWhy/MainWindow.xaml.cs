@@ -21,6 +21,7 @@ namespace SlowWhy
         private float currentRam;
         private Computer _computer;
         private float rpm;
+        private bool isDarkTheme = false;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
@@ -41,8 +42,10 @@ namespace SlowWhy
             };
             _computer.Open();
             this.Closed += (s, e) =>
-            timer.Stop();
-            _computer.Close();
+            {
+                timer.Stop();
+                _computer.Close();
+            };
         }
 
         private void InitializeApp()
@@ -59,7 +62,6 @@ namespace SlowWhy
             catch { }
         }
 
-        // GPU Name
         private void GetStaticHardwareInfo()
         {
             try
@@ -84,15 +86,12 @@ namespace SlowWhy
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            // CPU
             float cpuValue = cpuCounter.NextValue();
             txtCpu.Text = $"%{cpuValue:F0}";
 
-            //RAM
             ramValueMb = ramCounter.NextValue();
             txtRam.Text = $"{ramValueMb / 1024.0:F2} GB";
 
-            //DISK (C)
             try
             {
                 DriveInfo cDrive = new DriveInfo("C");
@@ -104,26 +103,21 @@ namespace SlowWhy
             }
             catch { }
 
-            // CPU Color
             if (cpuValue > 80) txtCpu.Foreground = Brushes.Red;
             else if (cpuValue > 50) txtCpu.Foreground = Brushes.Orange;
             else txtCpu.Foreground = Brushes.Green;
 
-            // Disk Color
             if (freeSpaceGb < 30) txtDisk.Foreground = Brushes.Red;
             else if (freeSpaceGb < 50) txtDisk.Foreground = Brushes.Orange;
             else txtDisk.Foreground = Brushes.Green;
 
-            // Ram Color
-            if(ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
+            if (ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
             else if (ramValueMb < 4096) txtRam.Foreground = Brushes.Orange;
             else txtRam.Foreground = Brushes.Green;
 
-            // Fan
             FanSpeed();
             if (rpm > 3000) pbFan.Foreground = Brushes.Red;
             else if (rpm > 2000) pbFan.Foreground = Brushes.Orange;
-            else if(rpm == 0) pbFan.Foreground = Brushes.Green;
             else pbFan.Foreground = Brushes.Green;
         }
 
@@ -145,12 +139,12 @@ namespace SlowWhy
                 {
                     try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
                 }
-                btnRamClear.Content = "Clean RAM";
+                btnRamClear.Content = "Quick Clean RAM";
 
                 float newRam = ramCounter.NextValue();
                 float diffrence = ramDiffrence(newRam);
                 float diffrenceGB = diffrence / 1024;
-                MessageBox.Show($"{diffrenceGB:F2}GB Evacuated");
+                MessageBox.Show($"{diffrenceGB:F2} GB Evacuated", "Quick Clean", MessageBoxButton.OK, MessageBoxImage.Information);
             });
         }
 
@@ -194,15 +188,33 @@ namespace SlowWhy
             PagesContainer.Content = null;
         }
 
+        private void themeSwitch(object sender, RoutedEventArgs e)
+        {
+            isDarkTheme = !isDarkTheme;
+
+            var themeUri = isDarkTheme
+                ? new Uri("Themes/DarkTheme.xaml", UriKind.Relative)
+                : new Uri("Themes/LightTheme.xaml", UriKind.Relative);
+
+            var newTheme = new ResourceDictionary { Source = themeUri };
+
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(newTheme);
+
+            menuTheme.Header = isDarkTheme ? "Use Light Theme" : "Use Dark Theme";
+        }
+
         private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("test");
+            MessageBox.Show("Test");
         }
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
         {
-
+            GetStaticHardwareInfo();
+            MessageBox.Show("System data refreshed!", "Refresh", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
         private void MenuGithub_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
@@ -212,16 +224,15 @@ namespace SlowWhy
             });
         }
 
-
         private void FanSpeed()
         {
             if (_computer == null) return;
 
-            foreach(IHardware hardware in _computer.Hardware)
+            foreach (IHardware hardware in _computer.Hardware)
             {
                 if (hardware == null) continue;
                 hardware.Update();
-                foreach(var sensor in hardware.Sensors)
+                foreach (var sensor in hardware.Sensors)
                 {
                     if (sensor.SensorType == SensorType.Fan)
                     {
