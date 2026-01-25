@@ -6,8 +6,8 @@
 
 <br>
 
-<img src="https://github.com/user-attachments/assets/d218ea0c-b6cb-4d2b-9bc3-e8ee46a579a0" width="300" alt="SlowWhy Dashboard">
-<img src="https://github.com/user-attachments/assets/1a5d0edb-3797-4dae-a8fb-e504443f4208" width="300" alt="SlowWhy CPU Monitor">
+<img width="481" height="704" alt="Image" src="https://github.com/user-attachments/assets/b7d834c1-4eb9-491c-8497-ee13cf68a354" />
+<img width="477" height="713" alt="Image" src="https://github.com/user-attachments/assets/c848cd41-6f80-43bf-b88c-40bca818efa0" />
 
 </div>
 
