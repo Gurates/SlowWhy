@@ -22,7 +22,6 @@ namespace SlowWhy
 {
     public partial class Ram : UserControl
     {
-        #region Win32 API Imports
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
 
@@ -39,9 +38,7 @@ namespace SlowWhy
 
         [DllImport("ntdll.dll", SetLastError = true)]
         private static extern uint NtSetSystemInformation(int SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength);
-        #endregion
 
-        #region Memory List Commands (Native API)
         private enum SYSTEM_MEMORY_LIST_COMMAND
         {
             MemoryCaptureAccessedBits = 0,
@@ -56,16 +53,13 @@ namespace SlowWhy
         private const int SystemMemoryListInformation = 80;
         private const int SystemFileCacheInformation = 21;
         private const int SystemCombinePhysicalMemoryInformation = 130;
-        #endregion
 
-        #region Cleaning Levels
         public enum CleaningLevel
         {
             Safe,
             Medium,
             Aggressive
         }
-        #endregion
 
         private PerformanceCounter ramCounter;
         private DispatcherTimer timer;
@@ -290,6 +284,72 @@ namespace SlowWhy
                 finally
                 {
                     Marshal.FreeHGlobal(mem);
+                }
+            }
+            catch { }
+        }
+
+        private void PurgeLowPriorityStandbyList()
+        {
+            try
+            {
+                int command = (int)SYSTEM_MEMORY_LIST_COMMAND.MemoryPurgeLowPriorityStandbyList;
+                IntPtr mem = Marshal.AllocHGlobal(sizeof(int));
+                try
+                {
+                    Marshal.WriteInt32(mem, command);
+                    NtSetSystemInformation(SystemMemoryListInformation, mem, sizeof(int));
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(mem);
+                }
+            }
+            catch { }
+        }
+
+        private void ClearRuntimeBroker()
+        {
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE Name = 'RuntimeBroker.exe'"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        try
+                        {
+                            var pid = Convert.ToInt32(obj["ProcessId"]);
+                            var proc = Process.GetProcessById(pid);
+                            if (proc.WorkingSet64 > 50 * 1024 * 1024)
+                            {
+                                EmptyWorkingSet(proc.Handle);
+                                SetProcessWorkingSetSize(proc.Handle, new IntPtr(-1), new IntPtr(-1));
+                            }
+                            proc.Dispose();
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void ClearRecycleBin()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/c echo y | PowerShell.exe -Command \"Clear-RecycleBin -Force -ErrorAction SilentlyContinue\"",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+
+                using (var proc = Process.Start(psi))
+                {
+                    proc?.WaitForExit(3000);
                 }
             }
             catch { }

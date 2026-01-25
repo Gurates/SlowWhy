@@ -103,6 +103,7 @@ namespace SlowWhy
             }
             catch { }
 
+            // Colors
             if (cpuValue > 80) txtCpu.Foreground = Brushes.Red;
             else if (cpuValue > 50) txtCpu.Foreground = Brushes.Orange;
             else txtCpu.Foreground = Brushes.Green;
