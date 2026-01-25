@@ -2,7 +2,7 @@
 
 # SlowWhy
 
-[![Latest Release](https://img.shields.io/github/v/release/Gurates/SlowWhy?label=Release)](https://github.com/Gurates/SlowWhy/releases/latest)
+[![Latest Release](https://img.shields.io/github/v/release/Gurates/SlowWhy?label=Release)](https://github.com/Gurates/SlowWhy/releases)
 
 <br>
 
