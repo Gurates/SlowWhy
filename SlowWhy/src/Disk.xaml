@@ -90,6 +90,7 @@
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Open Location" Click="MenuItem_OpenLocation_Click"/>
+                        <MenuItem Header="Delete" Click="Delete_Click"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>

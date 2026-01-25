@@ -28,6 +28,55 @@ namespace SlowWhy
             }
         }
 
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = dgItems.SelectedItem as DiskItemModel;
+            if (selected == null) return;
+
+            if (selected.Type == "File")
+            {
+                var result = MessageBox.Show(
+                $"\n\nAre you sure you want to continue?",
+                "Confirm RAM Cleaning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+                if (result == MessageBoxResult.No) return;
+
+                try
+                {
+                    if (File.Exists(System.IO.Path.Combine(selected.Path, selected.Name)))
+                    {
+                        File.Delete(System.IO.Path.Combine(selected.Path, selected.Name));
+
+                        var list = dgItems.ItemsSource as System.Collections.IList;
+                        if (list != null)
+                        {
+                            list.Remove(selected);
+                        }
+                        dgItems.Items.Refresh();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            if (selected.Type == "App")
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start("appwiz.cpl");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
         private void MenuItem_OpenLocation_Click(object sender, RoutedEventArgs e)
         {
             var selected = dgItems.SelectedItem as DiskItemModel;
