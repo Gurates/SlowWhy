@@ -136,34 +136,6 @@
                                        Foreground="#D13438"/>
                         </Grid>
                     </Border>
-
-                    <Border Style="{StaticResource SystemPanelStyle}">
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="Fan Speed" 
-                                           VerticalAlignment="Center" 
-                                           Foreground="{DynamicResource TextSecondaryBrush}" 
-                                           FontSize="13"/>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ProgressBar x:Name="pbFan" 
-                                             Width="30" 
-                                             Height="4" 
-                                             Value="0" 
-                                             Maximum="4500" 
-                                             Margin="0,0,10,0" 
-                                             Background="{DynamicResource ProgressBackgroundBrush}" 
-                                             Foreground="#0078D7" 
-                                             BorderThickness="0"/>
-                                <TextBlock x:Name="txtFan" 
-                                           Text="0 RPM" 
-                                           Style="{StaticResource ValueStyle}" 
-                                           FontSize="16" 
-                                           Foreground="#D13438"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
                 </StackPanel>
             </ScrollViewer>
 

@@ -114,11 +114,6 @@ namespace SlowWhy
             if (ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
             else if (ramValueMb < 4096) txtRam.Foreground = Brushes.Orange;
             else txtRam.Foreground = Brushes.Green;
-
-            FanSpeed();
-            if (rpm > 3000) pbFan.Foreground = Brushes.Red;
-            else if (rpm > 2000) pbFan.Foreground = Brushes.Orange;
-            else pbFan.Foreground = Brushes.Green;
         }
 
         private float ramDiffrence(float newRamValue)
@@ -222,31 +217,6 @@ namespace SlowWhy
                 FileName = "https://github.com/Gurates/SlowWhy",
                 UseShellExecute = true
             });
-        }
-
-        private void FanSpeed()
-        {
-            if (_computer == null) return;
-
-            foreach (IHardware hardware in _computer.Hardware)
-            {
-                if (hardware == null) continue;
-                hardware.Update();
-                foreach (var sensor in hardware.Sensors)
-                {
-                    if (sensor.SensorType == SensorType.Fan)
-                    {
-                        rpm = sensor.Value ?? 0;
-
-                        if (rpm > 0)
-                        {
-                            txtFan.Text = $"{rpm:F0} RPM";
-                            pbFan.Value = rpm;
-                        }
-                        return;
-                    }
-                }
-            }
         }
     }
 }

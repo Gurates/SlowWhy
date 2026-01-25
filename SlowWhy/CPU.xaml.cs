@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibreHardwareMonitor.Hardware;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace SlowWhy
         private DispatcherTimer _timer;
         private Dictionary<int, TimeSpan> _prevProcessTimes = new Dictionary<int, TimeSpan>();
         private DateTime _prevCheckTime;
+        private Computer _computer;
 
         public CPU()
         {
@@ -29,6 +31,14 @@ namespace SlowWhy
             _timer.Tick += Timer_Tick;
             _timer.Start();
             Timer_Tick(null, null);
+
+            _computer = new Computer()
+            {
+                IsCpuEnabled = true,
+                IsMotherboardEnabled = true,
+                IsControllerEnabled = true
+            };
+            _computer.Open();
         }
 
         private async void Timer_Tick(object sender, EventArgs e)
@@ -126,5 +136,6 @@ namespace SlowWhy
                 }
             }
         }
+
     }
 }

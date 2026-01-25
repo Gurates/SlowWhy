@@ -61,9 +61,9 @@ namespace SlowWhy
         #region Cleaning Levels
         public enum CleaningLevel
         {
-            Safe,       // Sadece Native API (Önerilen)
-            Medium,     // Native API + File Cache
-            Aggressive  // Tümü (Working Sets dahil)
+            Safe,
+            Medium,
+            Aggressive
         }
         #endregion
 
