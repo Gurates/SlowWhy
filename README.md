@@ -3,6 +3,7 @@
 # SlowWhy
 
 [![Releases](https://img.shields.io/badge/Releases-Download-blue)](https://github.com/Gurates/SlowWhy/releases)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 <br>
 
