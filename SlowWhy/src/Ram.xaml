@@ -123,13 +123,27 @@
             Background="{DynamicResource SecondaryRegionBrush}"
             BorderBrush="{DynamicResource WarningBrush}"
             BorderThickness="1">
-            <StackPanel Orientation="Horizontal">
-              <icon:PackIconPhosphorIcons Kind="Lightbulb" Width="14" Height="14" VerticalAlignment="Top" Margin="0,2,8,0" Foreground="{DynamicResource WarningBrush}" />
-              <TextBlock TextWrapping="Wrap" FontSize="10">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <icon:PackIconPhosphorIcons 
+                Grid.Column="0"
+                Kind="Lightbulb" 
+                Width="14" 
+                Height="14" 
+                VerticalAlignment="Top" 
+                Margin="0,2,8,0" 
+                Foreground="{DynamicResource WarningBrush}" />
+              <TextBlock 
+                Grid.Column="1"
+                TextWrapping="Wrap" 
+                FontSize="10">
                 <Run Text="Tip:" FontWeight="Bold" />
                 <Run Text=" Use Safe mode for daily use. Only use Aggressive before launching games." />
               </TextBlock>
-            </StackPanel>
+            </Grid>
           </Border>
         </StackPanel>
       </ScrollViewer>

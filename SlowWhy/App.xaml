@@ -11,6 +11,7 @@
         <hc:Theme />
         <ResourceDictionary Source="src/Styles/DataGridStyles.xaml" />
         <ResourceDictionary Source="src/Styles/ButtonStyles.xaml" />
+        <ResourceDictionary Source="src/Styles/BorderStyles.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

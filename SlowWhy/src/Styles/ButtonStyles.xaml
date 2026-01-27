@@ -53,4 +53,19 @@
     <Setter Property="Height" Value="20" />
   </Style>
 
+  <!--  Card hover - troca BorderBrush por PrimaryBrush no hover  -->
+  <Style x:Key="CardHoverBorder" TargetType="Border">
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Padding" Value="14,12" />
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
 </ResourceDictionary>

@@ -94,12 +94,7 @@
           <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
 
             <Border
-              Padding="14,12"
-              Background="{DynamicResource RegionBrush}"
-              BorderBrush="{DynamicResource BorderBrush}"
-              BorderThickness="1"
-              CornerRadius="4"
-              Cursor="Hand"
+              Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="CPU_Click">
               <Grid>
                 <StackPanel Orientation="Horizontal">
@@ -126,12 +121,7 @@
             </Border>
 
             <Border
-              Padding="14,12"
-              Background="{DynamicResource RegionBrush}"
-              BorderBrush="{DynamicResource BorderBrush}"
-              BorderThickness="1"
-              CornerRadius="4"
-              Cursor="Hand"
+              Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="Ram_Click">
               <Grid>
                 <StackPanel Orientation="Horizontal">
@@ -158,12 +148,7 @@
             </Border>
 
             <Border
-              Padding="14,12"
-              Background="{DynamicResource RegionBrush}"
-              BorderBrush="{DynamicResource BorderBrush}"
-              BorderThickness="1"
-              CornerRadius="4"
-              Cursor="Hand"
+              Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="GPU_Click">
               <Grid>
                 <StackPanel Orientation="Horizontal">
@@ -192,12 +177,7 @@
             </Border>
 
             <Border
-              Padding="14,12"
-              Background="{DynamicResource RegionBrush}"
-              BorderBrush="{DynamicResource BorderBrush}"
-              BorderThickness="1"
-              CornerRadius="4"
-              Cursor="Hand"
+              Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="DiskCard_Click">
               <Grid>
                 <StackPanel Orientation="Horizontal">
