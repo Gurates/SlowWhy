@@ -23,7 +23,7 @@
         <Button
           HorizontalAlignment="Left"
           Click="btnBack_Click"
-          Style="{StaticResource ButtonDefault}"
+          Style="{StaticResource ButtonIconCustom}"
           Padding="8,4">
           <StackPanel Orientation="Horizontal">
             <icon:PackIconPhosphorIcons Kind="ArrowLeft" Width="14" Height="14" VerticalAlignment="Center" />
