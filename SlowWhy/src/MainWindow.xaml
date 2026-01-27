@@ -1,173 +1,234 @@
-﻿<Window x:Class="SlowWhy.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SlowWhy" 
-        Height="580" Width="400" 
-        WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource BackgroundBrush}" 
-        ResizeMode="CanMinimize">
+﻿<hc:Window
+  x:Class="SlowWhy.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:hc="https://handyorg.github.io/handycontrol"
+  xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+  Title="SlowWhy"
+  Width="420"
+  Height="600"
+  ResizeMode="CanMinimize"
+  WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
-        <Style x:Key="SystemPanelStyle" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource CardHoverBrush}"/>
-                    <Setter Property="BorderBrush" Value="{DynamicResource BorderHoverBrush}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
 
-        <Style x:Key="ValueStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+    <Menu Grid.Row="0">
+      <MenuItem Header="_File">
+        <MenuItem Click="MenuExit_Click" Header="E_xit">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="SignOut" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+      <MenuItem Header="_View">
+        <MenuItem Click="MenuDashboard_Click" Header="Dashboard">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="House" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem
+          x:Name="menuTheme"
+          Click="themeSwitch"
+          Header="Toggle Theme">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="Moon" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Click="MenuRefresh_Click" Header="Refresh Data">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="ArrowClockwise" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
 
-        <Menu Grid.Row="0" 
-              Background="{DynamicResource MenuBackgroundBrush}" 
-              BorderBrush="{DynamicResource BorderBrush}" 
-              BorderThickness="0,0,0,1" 
-              Padding="5">
-            <MenuItem Header="_File" 
-                      FontSize="12" 
-                      Foreground="{DynamicResource TextPrimaryBrush}">
-                <Separator/>
-                <MenuItem Header="E_xit" Click="MenuExit_Click"/>
-            </MenuItem>
+      <MenuItem Header="_Help">
+        <MenuItem Click="MenuGithub_Click" Header="GitHub Repo">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="GithubLogo" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Click="MenuAbout_Click" Header="About SlowWhy">
+          <MenuItem.Icon>
+            <icon:PackIconPhosphorIcons Kind="Info" Width="14" Height="14" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+    </Menu>
 
-            <MenuItem Header="_View" 
-                      FontSize="12" 
-                      Foreground="{DynamicResource TextPrimaryBrush}">
-                <MenuItem Header="Dashboard" Click="MenuDashboard_Click"/>
-                <MenuItem x:Name="menuTheme" Header="Use Dark Theme" Click="themeSwitch"/>
-                <MenuItem Header="Refresh Data" Click="MenuRefresh_Click"/>
-            </MenuItem>
+    <TextBlock
+      Grid.Row="1"
+      Margin="15,12,15,8"
+      FontSize="16"
+      FontWeight="SemiBold"
+      Text="System Status" />
 
-            <MenuItem Header="_Help" 
-                      FontSize="12" 
-                      Foreground="{DynamicResource TextPrimaryBrush}">
-                <MenuItem Header="GitHub Repo" Click="MenuGithub_Click"/>
-                <MenuItem Header="About SlowWhy" Click="MenuAbout_Click"/>
-            </MenuItem>
-        </Menu>
+    <Grid Grid.Row="2" Margin="15,0">
+      <ScrollViewer x:Name="MainDashboard" VerticalScrollBarVisibility="Auto">
+        <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
 
-        <Border Grid.Row="1" 
-                BorderBrush="{DynamicResource BorderBrush}" 
-                BorderThickness="0,0,0,1" 
-                Margin="15,10,15,10" 
-                Padding="0,0,0,5">
-            <TextBlock Text="System Status" 
-                       FontSize="16" 
-                       FontWeight="SemiBold" 
-                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-        </Border>
+          <Border
+            Padding="14,12"
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Cursor="Hand"
+            MouseLeftButtonDown="CPU_Click">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <icon:PackIconPhosphorIcons
+                  Kind="Cpu"
+                  Width="20" Height="20"
+                  VerticalAlignment="Center"
+                  Foreground="{DynamicResource PrimaryBrush}" />
+                <TextBlock
+                  Margin="10,0,0,0"
+                  VerticalAlignment="Center"
+                  FontSize="13"
+                  Text="Processor (CPU)" />
+              </StackPanel>
+              <TextBlock
+                x:Name="txtCpu"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="---" />
+            </Grid>
+          </Border>
 
-        <Grid Grid.Row="2" Margin="15,0,15,0">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="MainDashboard">
-                <StackPanel>
-                    <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="CPU_Click">
-                        <Grid>
-                            <TextBlock Text="Processor (CPU)" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock x:Name="txtCpu" 
-                                       Text="---" 
-                                       Style="{StaticResource ValueStyle}" 
-                                       HorizontalAlignment="Right" 
-                                       Foreground="#0078D7"/>
-                        </Grid>
-                    </Border>
+          <Border
+            Padding="14,12"
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Cursor="Hand"
+            MouseLeftButtonDown="Ram_Click">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <icon:PackIconPhosphorIcons
+                  Kind="Memory"
+                  Width="20" Height="20"
+                  VerticalAlignment="Center"
+                  Foreground="{DynamicResource SuccessBrush}" />
+                <TextBlock
+                  Margin="10,0,0,0"
+                  VerticalAlignment="Center"
+                  FontSize="13"
+                  Text="Memory (RAM)" />
+              </StackPanel>
+              <TextBlock
+                x:Name="txtRam"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="---" />
+            </Grid>
+          </Border>
 
-                    <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="Ram_Click">
-                        <Grid>
-                            <TextBlock Text="Memory (RAM)" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock x:Name="txtRam" 
-                                       Text="---" 
-                                       Style="{StaticResource ValueStyle}" 
-                                       HorizontalAlignment="Right" 
-                                       Foreground="#28A745"/>
-                        </Grid>
-                    </Border>
+          <Border
+            Padding="14,12"
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Cursor="Hand"
+            MouseLeftButtonDown="GPU_Click">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <icon:PackIconPhosphorIcons
+                  Kind="Monitor"
+                  Width="20" Height="20"
+                  VerticalAlignment="Center"
+                  Foreground="{DynamicResource WarningBrush}" />
+                <TextBlock
+                  Margin="10,0,0,0"
+                  VerticalAlignment="Center"
+                  FontSize="13"
+                  Text="Graphics Card (GPU)" />
+              </StackPanel>
+              <TextBlock
+                x:Name="txtGpu"
+                MaxWidth="160"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Text="---"
+                TextAlignment="Right"
+                TextWrapping="Wrap" />
+            </Grid>
+          </Border>
 
-                    <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="GPU_Click">
-                        <Grid>
-                            <TextBlock Text="Graphics Card (GPU)" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock x:Name="txtGpu" 
-                                       Text="---" 
-                                       FontSize="12" 
-                                       HorizontalAlignment="Right" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextTertiaryBrush}" 
-                                       TextWrapping="Wrap" 
-                                       MaxWidth="200" 
-                                       TextAlignment="Right"/>
-                        </Grid>
-                    </Border>
+          <Border
+            Padding="14,12"
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Cursor="Hand"
+            MouseLeftButtonDown="DiskCard_Click">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <icon:PackIconPhosphorIcons
+                  Kind="HardDrives"
+                  Width="20" Height="20"
+                  VerticalAlignment="Center"
+                  Foreground="{DynamicResource DangerBrush}" />
+                <TextBlock
+                  Margin="10,0,0,0"
+                  VerticalAlignment="Center"
+                  FontSize="13"
+                  Text="Local Disk (C:)" />
+              </StackPanel>
+              <TextBlock
+                x:Name="txtDisk"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="---" />
+            </Grid>
+          </Border>
 
-                    <Border Style="{StaticResource SystemPanelStyle}" MouseLeftButtonDown="DiskCard_Click">
-                        <Grid>
-                            <TextBlock Text="Local Disk (C:)" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock x:Name="txtDisk" 
-                                       Text="---" 
-                                       Style="{StaticResource ValueStyle}" 
-                                       HorizontalAlignment="Right" 
-                                       Foreground="#D13438"/>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
+        </hc:UniformSpacingPanel>
+      </ScrollViewer>
 
-            <ContentControl x:Name="PagesContainer" Visibility="Collapsed"/>
-        </Grid>
-
-        <Button x:Name="btnRamClear" 
-                Grid.Row="3" 
-                Content="Quick Clean RAM" 
-                Height="35" 
-                Margin="15,10,15,10" 
-                Background="{DynamicResource ButtonBackgroundBrush}" 
-                Foreground="{DynamicResource ButtonForegroundBrush}" 
-                BorderBrush="{DynamicResource ButtonBorderBrush}" 
-                BorderThickness="1" 
-                Click="btnRamClear_Click"
-                Cursor="Hand"/>
-
-        <StatusBar Grid.Row="4" 
-                   Background="{DynamicResource StatusBarBrush}" 
-                   BorderBrush="{DynamicResource BorderBrush}" 
-                   BorderThickness="0,1,0,0" 
-                   Padding="5,2">
-            <StatusBarItem HorizontalContentAlignment="Stretch">
-                <TextBlock x:Name="txtStatusUpdate" 
-                           Text="Quick clean does not perform a deep RAM cleanup; for a deeper cleanup, go to the RAM tab." 
-                           FontSize="10" 
-                           Foreground="{DynamicResource TextTertiaryBrush}" 
-                           TextWrapping="Wrap"
-                           TextAlignment="Center"/>
-            </StatusBarItem>
-        </StatusBar>
-
+      <ContentControl x:Name="PagesContainer" Visibility="Collapsed" />
     </Grid>
-</Window>
+
+    <Button
+      x:Name="btnRamClear"
+      Grid.Row="3"
+      Height="38"
+      Margin="15,10"
+      hc:IconElement.Geometry="{x:Null}"
+      Click="btnRamClear_Click"
+      Style="{StaticResource ButtonPrimary}">
+      <StackPanel Orientation="Horizontal">
+        <icon:PackIconPhosphorIcons Kind="Broom" Width="14" Height="14" VerticalAlignment="Center" />
+        <TextBlock Margin="6,0,0,0" Text="Quick Clean RAM" VerticalAlignment="Center" />
+      </StackPanel>
+    </Button>
+
+    <StatusBar Grid.Row="4">
+      <StatusBarItem HorizontalContentAlignment="Stretch">
+        <TextBlock
+          x:Name="txtStatusUpdate"
+          FontSize="10"
+          Text="Quick clean does not perform a deep RAM cleanup; for a deeper cleanup, go to the RAM tab."
+          TextAlignment="Center"
+          TextWrapping="Wrap" />
+      </StatusBarItem>
+    </StatusBar>
+  </Grid>
+</hc:Window>

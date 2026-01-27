@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using Microsoft.Win32;
 
 namespace SlowWhy
 {
@@ -20,8 +20,7 @@ namespace SlowWhy
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
                 mainWindow.MainDashboard.Visibility = Visibility.Visible;
                 mainWindow.PagesContainer.Visibility = Visibility.Collapsed;
@@ -30,64 +29,50 @@ namespace SlowWhy
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var selected = dgItems.SelectedItem as DiskItemModel;
-            if (selected == null) return;
+            if (dgItems.SelectedItem is not DiskItemModel selected) return;
 
             if (selected.Type == "File")
             {
                 var result = MessageBox.Show(
-                $"\n\nAre you sure you want to continue?",
-                "Confirm RAM Cleaning",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
+                    "Are you sure you want to delete this file?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.No) return;
 
                 try
                 {
-                    if (File.Exists(System.IO.Path.Combine(selected.Path, selected.Name)))
+                    string fullPath = Path.Combine(selected.Path, selected.Name);
+                    if (File.Exists(fullPath))
                     {
-                        File.Delete(System.IO.Path.Combine(selected.Path, selected.Name));
-
-                        var list = dgItems.ItemsSource as System.Collections.IList;
-                        if (list != null)
-                        {
-                            list.Remove(selected);
-                        }
+                        File.Delete(fullPath);
+                        (dgItems.ItemsSource as System.Collections.IList)?.Remove(selected);
                         dgItems.Items.Refresh();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
             if (selected.Type == "App")
             {
-                try
-                {
-                    System.Diagnostics.Process.Start("appwiz.cpl");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                try { Process.Start("appwiz.cpl"); }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             }
         }
 
         private void MenuItem_OpenLocation_Click(object sender, RoutedEventArgs e)
         {
-            var selected = dgItems.SelectedItem as DiskItemModel;
-            if (selected == null) return;
+            if (dgItems.SelectedItem is not DiskItemModel selected) return;
 
             try
             {
-                string pathToOpen = selected.Path;
                 if (selected.Type == "App")
                 {
-                    MessageBox.Show("Application location is not available in registry.", "Info");
+                    MessageBox.Show("Application location is not available in registry.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -101,55 +86,45 @@ namespace SlowWhy
                     }
                 }
 
-                if (Directory.Exists(pathToOpen))
-                {
-                    Process.Start("explorer.exe", pathToOpen);
-                }
+                if (Directory.Exists(selected.Path))
+                    Process.Start("explorer.exe", selected.Path);
                 else
-                {
-                    MessageBox.Show($"Path does not exist:\n{pathToOpen}", "Error");
-                }
+                    MessageBox.Show($"Path does not exist:\n{selected.Path}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Cannot open location:\n{ex.Message}", "Error");
+                MessageBox.Show($"Cannot open location:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private async void btnScan_Click(object sender, RoutedEventArgs e)
         {
             btnScan.IsEnabled = false;
-            btnScan.Content = "Scanning...";
             txtStatus.Text = "Scanning system files...";
             pnlLoading.Visibility = Visibility.Visible;
             dgItems.ItemsSource = null;
 
-            // progressbar
-            Duration duration = new Duration(TimeSpan.FromSeconds(25));
-            DoubleAnimation doubleAnimation = new DoubleAnimation(0.0, 100.0, duration);
-            doubleAnimation.FillBehavior = FillBehavior.HoldEnd;
-            progressBar1.BeginAnimation(ProgressBar.ValueProperty, doubleAnimation);
+            var duration = new Duration(TimeSpan.FromSeconds(25));
+            var animation = new DoubleAnimation(0.0, 100.0, duration) { FillBehavior = FillBehavior.HoldEnd };
+            progressBar1.BeginAnimation(ProgressBar.ValueProperty, animation);
 
             try
             {
-                var results = await Task.Run(() => PerformFullScan());
-
+                var results = await Task.Run(PerformFullScan);
                 dgItems.ItemsSource = results.OrderByDescending(x => x.RawSize).ToList();
-
                 pnlLoading.Visibility = Visibility.Collapsed;
                 progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
                 progressBar1.Value = 100;
-                MessageBox.Show($"{results.Count} Number of large pieces of content found.");
+                MessageBox.Show($"{results.Count} large content items found.", "Scan Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 pnlLoading.Visibility = Visibility.Collapsed;
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
                 btnScan.IsEnabled = true;
-                btnScan.Content = "Scan";
                 pnlLoading.Visibility = Visibility.Collapsed;
                 progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
                 progressBar1.Value = 100;
@@ -158,12 +133,9 @@ namespace SlowWhy
 
         private List<DiskItemModel> PerformFullScan()
         {
-            List<DiskItemModel> combinedList = new List<DiskItemModel>();
-
+            var combinedList = new List<DiskItemModel>();
             combinedList.AddRange(GetInstalledApps());
-
             combinedList.AddRange(GetLargeFiles("C:\\"));
-
             return combinedList;
         }
 
@@ -177,43 +149,40 @@ namespace SlowWhy
 
             foreach (var path in registryPaths)
             {
-                using (var key = Registry.LocalMachine.OpenSubKey(path))
+                using var key = Registry.LocalMachine.OpenSubKey(path);
+                if (key == null) continue;
+
+                foreach (var subkeyName in key.GetSubKeyNames())
                 {
-                    if (key == null) continue;
-
-                    foreach (var subkeyName in key.GetSubKeyNames())
+                    using var subkey = key.OpenSubKey(subkeyName);
+                    try
                     {
-                        using (var subkey = key.OpenSubKey(subkeyName))
-                        {
-                            try
-                            {
-                                string name = subkey.GetValue("DisplayName") as string;
-                                if (string.IsNullOrEmpty(name)) continue;
+                        string name = subkey?.GetValue("DisplayName") as string;
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                                object sizeObj = subkey.GetValue("EstimatedSize");
-                                if (sizeObj != null)
+                        object sizeObj = subkey?.GetValue("EstimatedSize");
+                        if (sizeObj != null)
+                        {
+                            long sizeInKb = Convert.ToInt64(sizeObj);
+                            if (sizeInKb > 0)
+                            {
+                                apps.Add(new DiskItemModel
                                 {
-                                    long sizeInKb = Convert.ToInt64(sizeObj);
-                                    if (sizeInKb > 0)
-                                    {
-                                        apps.Add(new DiskItemModel
-                                        {
-                                            Name = name,
-                                            Type = "App",
-                                            RawSize = sizeInKb * 1024,
-                                            DisplaySize = (sizeInKb / 1024.0 / 1024.0).ToString("0.00") + " GB",
-                                            Path = "Installed"
-                                        });
-                                    }
-                                }
+                                    Name = name,
+                                    Type = "App",
+                                    RawSize = sizeInKb * 1024,
+                                    DisplaySize = (sizeInKb / 1024.0 / 1024.0).ToString("0.00") + " GB",
+                                    Path = "Installed"
+                                });
                             }
-                            catch { }
                         }
                     }
+                    catch { }
                 }
             }
             return apps;
         }
+
         private List<DiskItemModel> GetLargeFiles(string rootPath)
         {
             var files = new List<DiskItemModel>();
@@ -223,7 +192,7 @@ namespace SlowWhy
             while (stack.Count > 0)
             {
                 string currentDir = stack.Pop();
-                DirectoryInfo di = new DirectoryInfo(currentDir);
+                var di = new DirectoryInfo(currentDir);
 
                 try
                 {
@@ -253,7 +222,7 @@ namespace SlowWhy
                         }
                     }
                 }
-                catch (UnauthorizedAccessException) {}
+                catch (UnauthorizedAccessException) { }
                 catch { }
             }
             return files;

@@ -1,5 +1,4 @@
-﻿using LibreHardwareMonitor.Hardware;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,15 +7,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using LibreHardwareMonitor.Hardware;
 
 namespace SlowWhy
 {
-
     public partial class CPU : UserControl
     {
         private PerformanceCounter _totalCpuCounter;
         private DispatcherTimer _timer;
-        private Dictionary<int, TimeSpan> _prevProcessTimes = new Dictionary<int, TimeSpan>();
+        private Dictionary<int, TimeSpan> _prevProcessTimes = new();
         private DateTime _prevCheckTime;
         private Computer _computer;
 
@@ -28,11 +27,11 @@ namespace SlowWhy
             _prevCheckTime = DateTime.Now;
 
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.5) };
-            _timer.Tick += Timer_Tick;
+            _timer.Tick += OnTimerTick;
             _timer.Start();
-            Timer_Tick(null, null);
+            OnTimerTick(null, null);
 
-            _computer = new Computer()
+            _computer = new Computer
             {
                 IsCpuEnabled = true,
                 IsMotherboardEnabled = true,
@@ -41,15 +40,11 @@ namespace SlowWhy
             _computer.Open();
         }
 
-        private async void Timer_Tick(object sender, EventArgs e)
+        private async void OnTimerTick(object sender, EventArgs e)
         {
             float totalUsage = _totalCpuCounter.NextValue();
             txtTotalUsage.Text = $"{totalUsage:F0}%";
             pbTotalUsage.Value = totalUsage;
-
-            pbTotalUsage.Foreground = totalUsage > 80
-                ? System.Windows.Media.Brushes.Crimson
-                : System.Windows.Media.Brushes.DodgerBlue;
 
             var processList = await Task.Run(() => GetTopProcesses());
             dgProcesses.ItemsSource = processList;
@@ -72,17 +67,16 @@ namespace SlowWhy
                 {
                     if (p.Id == 0) continue;
 
-                    TimeSpan currentTotalProcessorTime = p.TotalProcessorTime;
+                    TimeSpan currentTotal = p.TotalProcessorTime;
                     double usagePercent = 0;
 
-                    if (_prevProcessTimes.ContainsKey(p.Id))
+                    if (_prevProcessTimes.TryGetValue(p.Id, out var prevTime))
                     {
-                        double cpuUsedMs = (currentTotalProcessorTime - _prevProcessTimes[p.Id]).TotalMilliseconds;
-
+                        double cpuUsedMs = (currentTotal - prevTime).TotalMilliseconds;
                         usagePercent = (cpuUsedMs / timeDiffMs) / coreCount * 100;
                     }
 
-                    _prevProcessTimes[p.Id] = currentTotalProcessorTime;
+                    _prevProcessTimes[p.Id] = currentTotal;
 
                     if (usagePercent > 0.1 || results.Count < 20)
                     {
@@ -95,10 +89,7 @@ namespace SlowWhy
                         });
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
 
             _prevCheckTime = now;
@@ -108,34 +99,28 @@ namespace SlowWhy
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
                 mainWindow.MainDashboard.Visibility = Visibility.Visible;
                 mainWindow.PagesContainer.Visibility = Visibility.Collapsed;
             }
         }
 
-
         private void CpuAppClose_Click(object sender, RoutedEventArgs e)
         {
-            var selected = dgProcesses.SelectedItem as CpuProcessModel;
-            if (selected == null) return;
+            if (dgProcesses.SelectedItem is not CpuProcessModel selected) return;
 
             try
             {
-                var procces = System.Diagnostics.Process.GetProcessById(selected.Id);
-                procces.Kill(true);
-                procces.WaitForExit(1000);
+                var process = Process.GetProcessById(selected.Id);
+                process.Kill(true);
+                process.WaitForExit(1000);
                 (dgProcesses.ItemsSource as IList)?.Remove(selected);
             }
             catch (Exception ex)
             {
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
     }
 }
