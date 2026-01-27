@@ -129,7 +129,7 @@ namespace SlowWhy
 
         private void NavigateTo(System.Windows.Controls.UserControl page)
         {
-            MainDashboard.Visibility = Visibility.Collapsed;
+            DashboardView.Visibility = Visibility.Collapsed;
             PagesContainer.Visibility = Visibility.Visible;
             PagesContainer.Content = page;
         }
@@ -139,7 +139,7 @@ namespace SlowWhy
         private void MenuDashboard_Click(object sender, RoutedEventArgs e)
         {
             PagesContainer.Visibility = Visibility.Collapsed;
-            MainDashboard.Visibility = Visibility.Visible;
+            DashboardView.Visibility = Visibility.Visible;
             PagesContainer.Content = null;
         }
 

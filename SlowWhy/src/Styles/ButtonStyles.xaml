@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style x:Key="ButtonIconCustom" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+    <Setter Property="Padding" Value="6" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+            <ContentPresenter
+              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+              RecognizesAccessKey="True"
+              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <!--  Hover - só muda a cor do ícone  -->
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+            </Trigger>
+            <!--  Pressed - cor ainda mais destacada  -->
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+              <Setter Property="Opacity" Value="0.8" />
+            </Trigger>
+            <!--  Disabled  -->
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.4" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!--  ButtonIconCustom.Small - Versão pequena do botão de ícone  -->
+  <Style
+    x:Key="ButtonIconCustom.Small"
+    BasedOn="{StaticResource ButtonIconCustom}"
+    TargetType="Button">
+    <Setter Property="Padding" Value="6,1" />
+    <Setter Property="Height" Value="20" />
+  </Style>
+
+</ResourceDictionary>

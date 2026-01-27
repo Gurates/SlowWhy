@@ -22,7 +22,7 @@ namespace SlowWhy
         {
             if (Application.Current.MainWindow is MainWindow mainWindow)
             {
-                mainWindow.MainDashboard.Visibility = Visibility.Visible;
+                mainWindow.DashboardView.Visibility = Visibility.Visible;
                 mainWindow.PagesContainer.Visibility = Visibility.Collapsed;
             }
         }
