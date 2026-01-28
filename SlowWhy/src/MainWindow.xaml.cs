@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Management;
-using System.IO;
+using HandyControl.Themes;
 using LibreHardwareMonitor.Hardware;
 
 namespace SlowWhy
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : HandyControl.Controls.Window
     {
-        private DispatcherTimer timer;
-        private PerformanceCounter cpuCounter;
-        private PerformanceCounter ramCounter;
-        private double freeSpaceGb;
-        private float previousRam;
-        private float ramValueMb;
-        private float currentRam;
+        private DispatcherTimer _timer;
+        private PerformanceCounter _cpuCounter;
+        private PerformanceCounter _ramCounter;
         private Computer _computer;
-        private float rpm;
-        private bool isDarkTheme = false;
+        private double _freeSpaceGb;
+        private float _ramValueMb;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
@@ -29,11 +26,11 @@ namespace SlowWhy
         public MainWindow()
         {
             InitializeComponent();
-            InitializeApp();
-            GetStaticHardwareInfo();
-            systemStatus();
+            InitializeMonitoring();
+            LoadStaticInfo();
+            StartMonitoring();
 
-            _computer = new Computer()
+            _computer = new Computer
             {
                 IsCpuEnabled = true,
                 IsGpuEnabled = true,
@@ -41,35 +38,35 @@ namespace SlowWhy
                 IsControllerEnabled = true,
             };
             _computer.Open();
-            this.Closed += (s, e) =>
+
+            Closed += (_, _) =>
             {
-                timer.Stop();
+                _timer.Stop();
                 _computer.Close();
             };
         }
 
-        private void InitializeApp()
+        private void InitializeMonitoring()
         {
             try
             {
-                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+                _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
 
-                timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(1);
-                timer.Tick += Timer_Tick;
+                _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                _timer.Tick += OnTimerTick;
             }
             catch { }
         }
 
-        private void GetStaticHardwareInfo()
+        private void LoadStaticInfo()
         {
             try
             {
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
+                using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
                 foreach (ManagementObject mo in searcher.Get())
                 {
-                    txtGpu.Text = mo["Name"].ToString();
+                    txtGpu.Text = mo["Name"]?.ToString() ?? "Unknown";
                     break;
                 }
             }
@@ -79,135 +76,96 @@ namespace SlowWhy
             }
         }
 
-        private void systemStatus()
+        private void StartMonitoring()
         {
-            timer.Start();
+            _timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void OnTimerTick(object sender, EventArgs e)
         {
-            float cpuValue = cpuCounter.NextValue();
-            txtCpu.Text = $"%{cpuValue:F0}";
+            float cpuValue = _cpuCounter.NextValue();
+            txtCpu.Text = $"{cpuValue:F0}%";
 
-            ramValueMb = ramCounter.NextValue();
-            txtRam.Text = $"{ramValueMb / 1024.0:F2} GB";
+            _ramValueMb = _ramCounter.NextValue();
+            txtRam.Text = $"{_ramValueMb / 1024.0:F2} GB";
 
             try
             {
-                DriveInfo cDrive = new DriveInfo("C");
+                var cDrive = new DriveInfo("C");
                 if (cDrive.IsReady)
                 {
-                    freeSpaceGb = cDrive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0);
-                    txtDisk.Text = $"{freeSpaceGb:F0} GB";
+                    _freeSpaceGb = cDrive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0);
+                    txtDisk.Text = $"{_freeSpaceGb:F0} GB";
                 }
             }
             catch { }
 
-            // Colors
-            if (cpuValue > 80) txtCpu.Foreground = Brushes.Red;
-            else if (cpuValue > 50) txtCpu.Foreground = Brushes.Orange;
-            else txtCpu.Foreground = Brushes.Green;
-
-            if (freeSpaceGb < 30) txtDisk.Foreground = Brushes.Red;
-            else if (freeSpaceGb < 50) txtDisk.Foreground = Brushes.Orange;
-            else txtDisk.Foreground = Brushes.Green;
-
-            if (ramValueMb < 3072) txtRam.Foreground = Brushes.Red;
-            else if (ramValueMb < 4096) txtRam.Foreground = Brushes.Orange;
-            else txtRam.Foreground = Brushes.Green;
-        }
-
-        private float ramDiffrence(float newRamValue)
-        {
-            previousRam = ramValueMb;
-            currentRam = newRamValue;
-            float delta = currentRam - previousRam;
-            return delta;
+            txtCpu.Foreground = cpuValue > 80 ? Brushes.Red : cpuValue > 50 ? Brushes.Orange : Brushes.Green;
+            txtDisk.Foreground = _freeSpaceGb < 30 ? Brushes.Red : _freeSpaceGb < 50 ? Brushes.Orange : Brushes.Green;
+            txtRam.Foreground = _ramValueMb < 3072 ? Brushes.Red : _ramValueMb < 4096 ? Brushes.Orange : Brushes.Green;
         }
 
         private void btnRamClear_Click(object sender, RoutedEventArgs e)
         {
-            btnRamClear.Content = "Cleaning...";
+            float ramBefore = _ramValueMb;
+
             Dispatcher.InvokeAsync(() =>
             {
-                Process[] processes = Process.GetProcesses();
-                foreach (Process p in processes)
+                foreach (var p in Process.GetProcesses())
                 {
                     try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
                 }
-                btnRamClear.Content = "Quick Clean RAM";
 
-                float newRam = ramCounter.NextValue();
-                float diffrence = ramDiffrence(newRam);
-                float diffrenceGB = diffrence / 1024;
-                MessageBox.Show($"{diffrenceGB:F2} GB Evacuated", "Quick Clean", MessageBoxButton.OK, MessageBoxImage.Information);
+                float ramAfter = _ramCounter.NextValue();
+                float diffGb = (ramAfter - ramBefore) / 1024f;
+                MessageBox.Show($"{diffGb:F2} GB Evacuated", "Quick Clean", MessageBoxButton.OK, MessageBoxImage.Information);
             });
         }
 
-        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new CPU());
+        private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new Ram());
+        private void GPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new GPU());
+        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new Disk());
+
+        private void NavigateTo(System.Windows.Controls.UserControl page)
         {
-            MainDashboard.Visibility = Visibility.Collapsed;
+            DashboardView.Visibility = Visibility.Collapsed;
             PagesContainer.Visibility = Visibility.Visible;
-            PagesContainer.Content = new Disk();
+            PagesContainer.Content = page;
         }
 
-        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MainDashboard.Visibility = Visibility.Collapsed;
-            PagesContainer.Visibility = Visibility.Visible;
-            PagesContainer.Content = new CPU();
-        }
-
-        private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MainDashboard.Visibility = Visibility.Collapsed;
-            PagesContainer.Visibility = Visibility.Visible;
-            PagesContainer.Content = new Ram();
-        }
-
-        private void GPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MainDashboard.Visibility = Visibility.Collapsed;
-            PagesContainer.Visibility = Visibility.Visible;
-            PagesContainer.Content = new GPU();
-        }
-
-        private void MenuExit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
+        private void MenuExit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 
         private void MenuDashboard_Click(object sender, RoutedEventArgs e)
         {
             PagesContainer.Visibility = Visibility.Collapsed;
-            MainDashboard.Visibility = Visibility.Visible;
+            DashboardView.Visibility = Visibility.Visible;
             PagesContainer.Content = null;
         }
 
         private void themeSwitch(object sender, RoutedEventArgs e)
         {
-            isDarkTheme = !isDarkTheme;
-
-            var themeUri = isDarkTheme
-                ? new Uri("Themes/DarkTheme.xaml", UriKind.Relative)
-                : new Uri("Themes/LightTheme.xaml", UriKind.Relative);
-
-            var newTheme = new ResourceDictionary { Source = themeUri };
-
-            Application.Current.Resources.MergedDictionaries.Clear();
-            Application.Current.Resources.MergedDictionaries.Add(newTheme);
-
-            menuTheme.Header = isDarkTheme ? "Use Light Theme" : "Use Dark Theme";
+            var tm = ThemeManager.Current;
+            if (tm.ApplicationTheme == ApplicationTheme.Dark)
+            {
+                tm.ApplicationTheme = ApplicationTheme.Light;
+                menuTheme.Header = "Use Dark Theme";
+            }
+            else
+            {
+                tm.ApplicationTheme = ApplicationTheme.Dark;
+                menuTheme.Header = "Use Light Theme";
+            }
         }
 
         private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Test");
+            MessageBox.Show("SlowWhy - System Monitor & Optimizer", "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
         {
-            GetStaticHardwareInfo();
+            LoadStaticInfo();
             MessageBox.Show("System data refreshed!", "Refresh", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

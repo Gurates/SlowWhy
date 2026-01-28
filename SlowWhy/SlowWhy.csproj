@@ -1,22 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5" />
-    <PackageReference Include="System.Management" Version="10.0.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+		<PackageReference Include="LibreHardwareMonitorLib" Version="0.9.5" />
+		<PackageReference Include="System.Management" Version="10.0.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="HandyControls" Version="3.6.0" />
+		<PackageReference Include="MahApps.Metro.IconPacks.PhosphorIcons" Version="6.2.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Page Include="App.xaml" />
-  </ItemGroup>
+	<ItemGroup>
+		<Page Remove="Properties\DesignTimeResources.xaml" />
+		<Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+			<ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+		</Page>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Page Include="App.xaml" />
+	</ItemGroup>
 
 </Project>

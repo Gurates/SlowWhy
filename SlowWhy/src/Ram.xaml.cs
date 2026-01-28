@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Management;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
-using System.Management;
-using System.IO;
 
 namespace SlowWhy
 {
@@ -51,7 +41,6 @@ namespace SlowWhy
         }
 
         private const int SystemMemoryListInformation = 80;
-        private const int SystemFileCacheInformation = 21;
         private const int SystemCombinePhysicalMemoryInformation = 130;
 
         public enum CleaningLevel
@@ -61,53 +50,42 @@ namespace SlowWhy
             Aggressive
         }
 
-        private PerformanceCounter ramCounter;
-        private DispatcherTimer timer;
-        private float previousRam;
-        private float ramValueMb;
-        private float currentRam;
+        private PerformanceCounter _ramCounter;
+        private DispatcherTimer _timer;
+        private float _ramValueMb;
 
         public Ram()
         {
             InitializeComponent();
-            InitializeApp();
-            timer.Start();
+            InitializeMonitoring();
+            _timer.Start();
         }
 
-        private void InitializeApp()
+        private void InitializeMonitoring()
         {
             try
             {
-                ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-                timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(1);
-                timer.Tick += Timer_Tick;
+                _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+                _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                _timer.Tick += OnTimerTick;
             }
             catch { }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void OnTimerTick(object sender, EventArgs e)
         {
-            ramValueMb = ramCounter.NextValue();
-            txtRam.Text = $"{ramValueMb / 1024.0:F2} GB";
+            _ramValueMb = _ramCounter.NextValue();
+            txtRam.Text = $"{_ramValueMb / 1024.0:F2} GB";
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            _timer.Stop();
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
-                mainWindow.MainDashboard.Visibility = Visibility.Visible;
+                mainWindow.DashboardView.Visibility = Visibility.Visible;
                 mainWindow.PagesContainer.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private float ramDiffrence(float newRamValue)
-        {
-            previousRam = ramValueMb;
-            currentRam = newRamValue;
-            float delta = currentRam - previousRam;
-            return delta;
         }
 
         private async void btnRamClear_Click(object sender, RoutedEventArgs e)
@@ -126,15 +104,13 @@ namespace SlowWhy
                 $"{levelDescription}\n\nAre you sure you want to continue?",
                 "Confirm RAM Cleaning",
                 MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
+                MessageBoxImage.Question);
 
             if (result == MessageBoxResult.No) return;
 
             btnRamClear.IsEnabled = false;
-            btnRamClear.Content = "Optimizing...";
 
-            float ramBefore = ramCounter.NextValue();
+            float ramBefore = _ramCounter.NextValue();
 
             await Task.Run(() =>
             {
@@ -148,32 +124,22 @@ namespace SlowWhy
 
                 if (selectedLevel >= CleaningLevel.Medium)
                 {
-                    try
-                    {
-                        FlushFileSystemCache();
-                    }
-                    catch { }
+                    try { FlushFileSystemCache(); } catch { }
                 }
 
                 if (selectedLevel >= CleaningLevel.Aggressive)
                 {
                     ClearWorkingSets();
-                    try
-                    {
-                        ClearStandbyCache();
-                    }
-                    catch { }
+                    try { ClearStandbyCache(); } catch { }
                 }
 
                 System.Threading.Thread.Sleep(500);
             });
 
-            float ramAfter = ramCounter.NextValue();
-            float diffrenceMB = ramAfter - ramBefore;
-            float diffrenceGB = diffrenceMB / 1024;
+            float ramAfter = _ramCounter.NextValue();
+            float diffGb = (ramAfter - ramBefore) / 1024f;
 
             btnRamClear.IsEnabled = true;
-            btnRamClear.Content = "Clean RAM";
 
             string modeText = selectedLevel switch
             {
@@ -184,27 +150,24 @@ namespace SlowWhy
             };
 
             MessageBox.Show(
-                $"{diffrenceGB:F2} GB Freed\n\nMode: {modeText}\nYour apps are running smoothly!",
+                $"{diffGb:F2} GB Freed\n\nMode: {modeText}\nYour apps are running smoothly!",
                 "RAM Optimization Complete",
                 MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+                MessageBoxImage.Information);
         }
 
         private CleaningLevel GetSelectedCleaningLevel()
         {
-            if (cmbCleaningLevel.SelectedIndex == 0)
-                return CleaningLevel.Safe;
-            else if (cmbCleaningLevel.SelectedIndex == 1)
-                return CleaningLevel.Medium;
-            else
-                return CleaningLevel.Aggressive;
+            return cmbCleaningLevel.SelectedIndex switch
+            {
+                0 => CleaningLevel.Safe,
+                1 => CleaningLevel.Medium,
+                _ => CleaningLevel.Aggressive
+            };
         }
 
         private void ClearWorkingSets()
         {
-            var processes = Process.GetProcesses();
-
             string[] protectedProcesses = {
                 "explorer", "dwm", "csrss", "winlogon", "services",
                 "lsass", "svchost", "System", "smss", "wininit"
@@ -212,24 +175,19 @@ namespace SlowWhy
 
             const long minWorkingSet = 100 * 1024 * 1024;
 
-            foreach (var p in processes)
+            foreach (var p in Process.GetProcesses())
             {
                 try
                 {
                     if (p.HasExited || p.Handle == IntPtr.Zero) continue;
-
                     if (p.WorkingSet64 < minWorkingSet) continue;
-
                     if (protectedProcesses.Any(x => p.ProcessName.ToLower().Contains(x))) continue;
 
                     EmptyWorkingSet(p.Handle);
                     SetProcessWorkingSetSize(p.Handle, new IntPtr(-1), new IntPtr(-1));
                 }
                 catch { }
-                finally
-                {
-                    p.Dispose();
-                }
+                finally { p.Dispose(); }
             }
         }
 
@@ -244,10 +202,7 @@ namespace SlowWhy
                     Marshal.WriteInt32(mem, command);
                     NtSetSystemInformation(SystemMemoryListInformation, mem, sizeof(int));
                 }
-                finally
-                {
-                    Marshal.FreeHGlobal(mem);
-                }
+                finally { Marshal.FreeHGlobal(mem); }
             }
             catch { }
         }
@@ -263,10 +218,7 @@ namespace SlowWhy
                     Marshal.WriteInt32(mem, command);
                     NtSetSystemInformation(SystemMemoryListInformation, mem, sizeof(int));
                 }
-                finally
-                {
-                    Marshal.FreeHGlobal(mem);
-                }
+                finally { Marshal.FreeHGlobal(mem); }
             }
             catch { }
         }
@@ -281,76 +233,7 @@ namespace SlowWhy
                     Marshal.WriteInt32(mem, 1);
                     NtSetSystemInformation(SystemCombinePhysicalMemoryInformation, mem, sizeof(int));
                 }
-                finally
-                {
-                    Marshal.FreeHGlobal(mem);
-                }
-            }
-            catch { }
-        }
-
-        private void PurgeLowPriorityStandbyList()
-        {
-            try
-            {
-                int command = (int)SYSTEM_MEMORY_LIST_COMMAND.MemoryPurgeLowPriorityStandbyList;
-                IntPtr mem = Marshal.AllocHGlobal(sizeof(int));
-                try
-                {
-                    Marshal.WriteInt32(mem, command);
-                    NtSetSystemInformation(SystemMemoryListInformation, mem, sizeof(int));
-                }
-                finally
-                {
-                    Marshal.FreeHGlobal(mem);
-                }
-            }
-            catch { }
-        }
-
-        private void ClearRuntimeBroker()
-        {
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE Name = 'RuntimeBroker.exe'"))
-                {
-                    foreach (ManagementObject obj in searcher.Get())
-                    {
-                        try
-                        {
-                            var pid = Convert.ToInt32(obj["ProcessId"]);
-                            var proc = Process.GetProcessById(pid);
-                            if (proc.WorkingSet64 > 50 * 1024 * 1024)
-                            {
-                                EmptyWorkingSet(proc.Handle);
-                                SetProcessWorkingSetSize(proc.Handle, new IntPtr(-1), new IntPtr(-1));
-                            }
-                            proc.Dispose();
-                        }
-                        catch { }
-                    }
-                }
-            }
-            catch { }
-        }
-
-        private void ClearRecycleBin()
-        {
-            try
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "cmd.exe",
-                    Arguments = "/c echo y | PowerShell.exe -Command \"Clear-RecycleBin -Force -ErrorAction SilentlyContinue\"",
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                };
-
-                using (var proc = Process.Start(psi))
-                {
-                    proc?.WaitForExit(3000);
-                }
+                finally { Marshal.FreeHGlobal(mem); }
             }
             catch { }
         }
@@ -367,30 +250,25 @@ namespace SlowWhy
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
-
-                using (var proc = Process.Start(psi))
-                {
-                    proc?.WaitForExit(3000);
-                }
+                using var proc = Process.Start(psi);
+                proc?.WaitForExit(3000);
             }
             catch { }
 
             try
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE Name = 'RuntimeBroker.exe'"))
+                using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE Name = 'RuntimeBroker.exe'");
+                foreach (ManagementObject obj in searcher.Get())
                 {
-                    foreach (ManagementObject obj in searcher.Get())
+                    try
                     {
-                        try
-                        {
-                            var pid = Convert.ToInt32(obj["ProcessId"]);
-                            var proc = Process.GetProcessById(pid);
-                            EmptyWorkingSet(proc.Handle);
-                            SetProcessWorkingSetSize(proc.Handle, new IntPtr(-1), new IntPtr(-1));
-                            proc.Dispose();
-                        }
-                        catch { }
+                        int pid = Convert.ToInt32(obj["ProcessId"]);
+                        var proc = Process.GetProcessById(pid);
+                        EmptyWorkingSet(proc.Handle);
+                        SetProcessWorkingSetSize(proc.Handle, new IntPtr(-1), new IntPtr(-1));
+                        proc.Dispose();
                     }
+                    catch { }
                 }
             }
             catch { }
@@ -398,8 +276,7 @@ namespace SlowWhy
 
         private void FlushFileSystemCache()
         {
-            IntPtr min = IntPtr.Zero;
-            IntPtr max = IntPtr.Zero;
+            IntPtr min = IntPtr.Zero, max = IntPtr.Zero;
             int flags = 0;
 
             if (GetSystemFileCacheSize(ref min, ref max, ref flags))
