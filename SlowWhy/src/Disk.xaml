@@ -166,7 +166,7 @@
       <StatusBarItem>
         <ProgressBar
           x:Name="progressBar1"
-          Width="120"
+          Width="150"
           Height="15"
           Maximum="100"
           Minimum="0" />

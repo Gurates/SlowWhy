@@ -102,6 +102,7 @@
           x:Name="cmbCleaningLevel"
           Height="42"
           FontSize="12"
+          ItemContainerStyle="{StaticResource ComboBoxItemCustom}"
           SelectedIndex="0"
           Style="{StaticResource ComboBoxExtend}">
           <ComboBoxItem>
@@ -146,7 +147,7 @@
 
     <Border
       Grid.Row="3"
-      Margin="10,10,10,0"
+      Margin="10,10,10,10"
       Padding="15"
       Background="{DynamicResource RegionBrush}"
       BorderBrush="{DynamicResource BorderBrush}"
@@ -223,7 +224,6 @@
       BorderThickness="0,1,0,0">
       <Button
         x:Name="btnRamClear"
-        Height="40"
         Click="btnRamClear_Click"
         Style="{StaticResource ButtonPrimary}">
         <StackPanel Orientation="Horizontal">
