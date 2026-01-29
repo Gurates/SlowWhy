@@ -10,161 +10,161 @@
   ResizeMode="CanMinimize"
   WindowStartupLocation="CenterScreen">
 
-  <Grid>
-    <Grid x:Name="DashboardView">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+    <Grid>
+        <Grid x:Name="DashboardView">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-      <Menu Grid.Row="0">
-        <MenuItem Header="_File">
-          <MenuItem Click="MenuExit_Click" Header="E_xit">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+            <Menu Grid.Row="0">
+                <MenuItem Header="_File">
+                    <MenuItem Click="MenuExit_Click" Header="E_xit">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="SignOut" />
-            </MenuItem.Icon>
-          </MenuItem>
-        </MenuItem>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
 
-        <MenuItem Header="_View">
-          <MenuItem Click="MenuDashboard_Click" Header="Dashboard">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+                <MenuItem Header="_View">
+                    <MenuItem Click="MenuDashboard_Click" Header="Dashboard">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="House" />
-            </MenuItem.Icon>
-          </MenuItem>
-          <MenuItem
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
             x:Name="menuTheme"
             Click="themeSwitch"
             Header="Toggle Theme">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="Moon" />
-            </MenuItem.Icon>
-          </MenuItem>
-          <MenuItem Click="MenuRefresh_Click" Header="Refresh Data">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Click="MenuRefresh_Click" Header="Refresh Data">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="ArrowClockwise" />
-            </MenuItem.Icon>
-          </MenuItem>
-        </MenuItem>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
 
-        <MenuItem Header="_Help">
-          <MenuItem Click="MenuGithub_Click" Header="GitHub Repo">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+                <MenuItem Header="_Help">
+                    <MenuItem Click="MenuGithub_Click" Header="GitHub Repo">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="GithubLogo" />
-            </MenuItem.Icon>
-          </MenuItem>
-          <MenuItem Click="MenuAbout_Click" Header="About SlowWhy">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Click="MenuAbout_Click" Header="About SlowWhy">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="Info" />
-            </MenuItem.Icon>
-          </MenuItem>
-        </MenuItem>
-      </Menu>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
 
-      <TextBlock
+            <TextBlock
         Grid.Row="1"
         Margin="15,12,15,8"
         FontSize="16"
         FontWeight="SemiBold"
         Text="System Status" />
 
-      <Grid Grid.Row="2" Margin="15,0">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
+            <Grid Grid.Row="2" Margin="15,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
 
-            <Border
+                        <Border
               Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="CPU_Click">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource PrimaryBrush}"
                     Kind="Cpu" />
-                  <TextBlock
+                                    <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="13"
                     Text="Processor (CPU)" />
-                </StackPanel>
-                <TextBlock
+                                </StackPanel>
+                                <TextBlock
                   x:Name="txtCpu"
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
                   FontSize="18"
                   FontWeight="SemiBold"
                   Text="---" />
-              </Grid>
-            </Border>
+                            </Grid>
+                        </Border>
 
-            <Border
+                        <Border
               Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="Ram_Click">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource SuccessBrush}"
                     Kind="Memory" />
-                  <TextBlock
+                                    <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="13"
                     Text="Memory (RAM)" />
-                </StackPanel>
-                <TextBlock
+                                </StackPanel>
+                                <TextBlock
                   x:Name="txtRam"
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
                   FontSize="18"
                   FontWeight="SemiBold"
                   Text="---" />
-              </Grid>
-            </Border>
+                            </Grid>
+                        </Border>
 
-            <Border
+                        <Border
               Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="GPU_Click">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource WarningBrush}"
                     Kind="Monitor" />
-                  <TextBlock
+                                    <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="13"
                     Text="Graphics Card (GPU)" />
-                </StackPanel>
-                <TextBlock
+                                </StackPanel>
+                                <TextBlock
                   x:Name="txtGpu"
                   MaxWidth="160"
                   HorizontalAlignment="Right"
@@ -173,74 +173,100 @@
                   Text="---"
                   TextAlignment="Right"
                   TextWrapping="Wrap" />
-              </Grid>
-            </Border>
+                            </Grid>
+                        </Border>
 
-            <Border
+                        <Border
               Style="{StaticResource DashboardCardBorder}"
               MouseLeftButtonDown="DiskCard_Click">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource DangerBrush}"
                     Kind="HardDrives" />
-                  <TextBlock
+                                    <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="13"
                     Text="Local Disk (C:)" />
-                </StackPanel>
-                <TextBlock
+                                </StackPanel>
+                                <TextBlock
                   x:Name="txtDisk"
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
                   FontSize="18"
                   FontWeight="SemiBold"
                   Text="---" />
-              </Grid>
-            </Border>
+                            </Grid>
+                        </Border>
 
-          </hc:UniformSpacingPanel>
-        </ScrollViewer>
+                    </hc:UniformSpacingPanel>
+                </ScrollViewer>
 
-      </Grid>
+            </Grid>
 
-      <Button
+            <Grid Grid.Row="3" Margin="15,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button
         x:Name="btnRamClear"
-        Grid.Row="3"
+        Grid.Column="0"
         Height="38"
-        Margin="15,10"
         hc:IconElement.Geometry="{x:Null}"
         Click="btnRamClear_Click"
         Style="{StaticResource ButtonPrimary}">
-        <StackPanel Orientation="Horizontal">
-          <icon:PackIconPhosphorIcons
+                    <StackPanel Orientation="Horizontal">
+                        <icon:PackIconPhosphorIcons
             Width="14"
             Height="14"
             VerticalAlignment="Center"
             Kind="Broom" />
-          <TextBlock
+                        <TextBlock
             Margin="6,0,0,0"
             VerticalAlignment="Center"
             Text="Quick Clean RAM" />
-        </StackPanel>
-      </Button>
+                    </StackPanel>
+                </Button>
 
-      <StatusBar Grid.Row="4">
-        <StatusBarItem HorizontalContentAlignment="Stretch">
-          <TextBlock
+                <Button
+          x:Name="btnFileClear"
+          Grid.Column="2"
+          Height="38"
+          hc:IconElement.Geometry="{x:Null}"
+          Click="btnFileClear_Click"
+          Style="{StaticResource ButtonPrimary}">
+                    <StackPanel Orientation="Horizontal">
+                        <icon:PackIconPhosphorIcons
+              Width="14"
+              Height="14"
+              VerticalAlignment="Center"
+              Kind="Trash" />
+                        <TextBlock
+              Margin="6,0,0,0"
+              VerticalAlignment="Center"
+              Text="Clear Junk Files" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <StatusBar Grid.Row="4">
+                <StatusBarItem HorizontalContentAlignment="Stretch">
+                    <TextBlock
             x:Name="txtStatusUpdate"
             FontSize="10"
             Text="Quick clean does not perform a deep RAM cleanup; for a deeper cleanup, go to the RAM tab."
             TextAlignment="Center"
             TextWrapping="Wrap" />
-        </StatusBarItem>
-      </StatusBar>
-    </Grid>
+                </StatusBarItem>
+            </StatusBar>
+        </Grid>
 
-    <ContentControl x:Name="PagesContainer" Visibility="Collapsed" />
-  </Grid>
+        <ContentControl x:Name="PagesContainer" Visibility="Collapsed" />
+    </Grid>
 </hc:Window>

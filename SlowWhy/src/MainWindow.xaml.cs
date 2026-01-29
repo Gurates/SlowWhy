@@ -107,6 +107,14 @@ namespace SlowWhy
 
         private void btnRamClear_Click(object sender, RoutedEventArgs e)
         {
+            var result = MessageBox.Show(
+                $"\n\nAre you sure you want to continue?",
+                "Confirm Quic RAM Cleaning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.No) return;
+
             float ramBefore = _ramValueMb;
 
             Dispatcher.InvokeAsync(() =>
@@ -120,6 +128,78 @@ namespace SlowWhy
                 float diffGb = (ramAfter - ramBefore) / 1024f;
                 MessageBox.Show($"{diffGb:F2} GB Evacuated", "Quick Clean", MessageBoxButton.OK, MessageBoxImage.Information);
             });
+        }
+
+        private void clearTempFolder()
+        {
+            string tempFolder = System.IO.Path.GetTempPath();
+
+            string[] files = Directory.GetFiles(tempFolder);
+
+            foreach (string filePath in files)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+        }
+
+        private void clearTempFolder1()
+        {
+            string systemTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp");
+
+            string[] files = Directory.GetFiles(systemTemp);
+
+            foreach (string filePath in files)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+        }
+
+        private void clearPrefetch()
+        {
+            string prefetchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Prefetch");
+
+            string[] files = Directory.GetFiles(prefetchPath);
+
+            foreach (string filePath in files)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+        }
+
+        private void btnFileClear_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                $"\n\nIf you approve, your %temp% temp and prefetch folders will be cleared.",
+                "Confirm Junk Files Cleaning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.No) return;
+
+            clearTempFolder();
+            clearTempFolder1();
+            clearPrefetch();
         }
 
         private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new CPU());
