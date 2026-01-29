@@ -24,7 +24,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <Menu BorderThickness="0">
+      <Menu Background="Transparent" BorderThickness="0">
         <MenuItem Header="_File">
           <MenuItem Click="MenuExit_Click" Header="E_xit">
             <MenuItem.Icon>
