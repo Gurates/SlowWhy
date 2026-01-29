@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using MessageBox = HandyControl.Controls.MessageBox;
 using LibreHardwareMonitor.Hardware;
 
 namespace SlowWhy

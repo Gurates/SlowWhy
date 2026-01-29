@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows.Media.Animation;
 using Microsoft.Win32;
 

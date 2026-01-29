@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows.Threading;
 
 namespace SlowWhy

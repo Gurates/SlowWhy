@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows.Threading;
 using HandyControl.Themes;
 using LibreHardwareMonitor.Hardware;
