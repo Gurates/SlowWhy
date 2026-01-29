@@ -66,10 +66,12 @@
       <DataGrid
         x:Name="dgItems"
         AutoGenerateColumns="False"
+        GridLinesVisibility="Vertical"
         HeadersVisibility="Column"
         IsReadOnly="True"
         RowStyle="{StaticResource CustomDataGridRowStyle}"
-        Style="{StaticResource DataGrid.Small}">
+        Style="{StaticResource DataGrid.Small}"
+        VerticalGridLinesBrush="{DynamicResource SecondaryRegionBrush}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="180"
@@ -136,7 +138,6 @@
       BorderThickness="0,1,0,0">
       <Button
         x:Name="btnScan"
-        Height="35"
         Click="btnScan_Click"
         Style="{StaticResource ButtonPrimary}">
         <StackPanel Orientation="Horizontal">

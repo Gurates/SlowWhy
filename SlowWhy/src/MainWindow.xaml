@@ -5,9 +5,13 @@
   xmlns:hc="https://handyorg.github.io/handycontrol"
   xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
   Title="SlowWhy"
-  Width="420"
-  Height="600"
+  MinWidth="420"
+  MinHeight="600"
+  MaxWidth="800"
+  MaxHeight="600"
   ResizeMode="CanMinimize"
+  Style="{StaticResource WindowWin10}"
+  SystemBackdropType="Mica"
   WindowStartupLocation="CenterScreen">
 
   <Grid>
@@ -20,7 +24,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <Menu Grid.Row="0">
+      <Menu BorderThickness="0">
         <MenuItem Header="_File">
           <MenuItem Click="MenuExit_Click" Header="E_xit">
             <MenuItem.Icon>
@@ -93,9 +97,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
           <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
 
-            <Border
-              Style="{StaticResource DashboardCardBorder}"
-              MouseLeftButtonDown="CPU_Click">
+            <Border MouseLeftButtonDown="CPU_Click" Style="{StaticResource DashboardCardBorder}">
               <Grid>
                 <StackPanel Orientation="Horizontal">
                   <icon:PackIconPhosphorIcons
@@ -120,9 +122,7 @@
               </Grid>
             </Border>
 
-            <Border
-              Style="{StaticResource DashboardCardBorder}"
-              MouseLeftButtonDown="Ram_Click">
+            <Border MouseLeftButtonDown="Ram_Click" Style="{StaticResource DashboardCardBorder}">
               <Grid>
                 <StackPanel Orientation="Horizontal">
                   <icon:PackIconPhosphorIcons
@@ -147,9 +147,7 @@
               </Grid>
             </Border>
 
-            <Border
-              Style="{StaticResource DashboardCardBorder}"
-              MouseLeftButtonDown="GPU_Click">
+            <Border MouseLeftButtonDown="GPU_Click" Style="{StaticResource DashboardCardBorder}">
               <Grid>
                 <StackPanel Orientation="Horizontal">
                   <icon:PackIconPhosphorIcons
@@ -157,7 +155,7 @@
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource WarningBrush}"
-                    Kind="Monitor" />
+                    Kind="GraphicsCard" />
                   <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
@@ -176,9 +174,7 @@
               </Grid>
             </Border>
 
-            <Border
-              Style="{StaticResource DashboardCardBorder}"
-              MouseLeftButtonDown="DiskCard_Click">
+            <Border MouseLeftButtonDown="DiskCard_Click" Style="{StaticResource DashboardCardBorder}">
               <Grid>
                 <StackPanel Orientation="Horizontal">
                   <icon:PackIconPhosphorIcons
@@ -211,7 +207,6 @@
       <Button
         x:Name="btnRamClear"
         Grid.Row="3"
-        Height="38"
         Margin="15,10"
         hc:IconElement.Geometry="{x:Null}"
         Click="btnRamClear_Click"
