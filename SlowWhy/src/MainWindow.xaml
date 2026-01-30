@@ -5,30 +5,28 @@
   xmlns:hc="https://handyorg.github.io/handycontrol"
   xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
   Title="SlowWhy"
-  MinWidth="420"
-  MinHeight="600"
-  MaxWidth="800"
-  MaxHeight="600"
-  ResizeMode="CanMinimize"
+  Height="600"
+  Width="420"
+  ResizeMode="NoResize"
   Style="{StaticResource WindowWin10}"
   SystemBackdropType="Mica"
   WindowStartupLocation="CenterScreen">
 
-  <Grid>
-    <Grid x:Name="DashboardView">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+    <Grid>
+        <Grid x:Name="DashboardView">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-      <Menu Background="Transparent" BorderThickness="0">
-        <MenuItem Header="_File">
-          <MenuItem Click="MenuExit_Click" Header="E_xit">
-            <MenuItem.Icon>
-              <icon:PackIconPhosphorIcons
+            <Menu Background="Transparent" BorderThickness="0">
+                <MenuItem Header="_File">
+                    <MenuItem Click="MenuExit_Click" Header="E_xit">
+                        <MenuItem.Icon>
+                            <icon:PackIconPhosphorIcons
                 Width="14"
                 Height="14"
                 Kind="SignOut" />
@@ -97,10 +95,10 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <hc:UniformSpacingPanel Orientation="Vertical" Spacing="10">
 
-            <Border MouseLeftButtonDown="CPU_Click" Style="{StaticResource DashboardCardBorder}">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                        <Border MouseLeftButtonDown="CPU_Click" Style="{StaticResource DashboardCardBorder}">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -122,10 +120,10 @@
                             </Grid>
                         </Border>
 
-            <Border MouseLeftButtonDown="Ram_Click" Style="{StaticResource DashboardCardBorder}">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                        <Border MouseLeftButtonDown="Ram_Click" Style="{StaticResource DashboardCardBorder}">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -147,16 +145,16 @@
                             </Grid>
                         </Border>
 
-            <Border MouseLeftButtonDown="GPU_Click" Style="{StaticResource DashboardCardBorder}">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                        <Border MouseLeftButtonDown="GPU_Click" Style="{StaticResource DashboardCardBorder}">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource WarningBrush}"
                     Kind="GraphicsCard" />
-                  <TextBlock
+                                    <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="13"
@@ -174,10 +172,10 @@
                             </Grid>
                         </Border>
 
-            <Border MouseLeftButtonDown="DiskCard_Click" Style="{StaticResource DashboardCardBorder}">
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <icon:PackIconPhosphorIcons
+                        <Border MouseLeftButtonDown="DiskCard_Click" Style="{StaticResource DashboardCardBorder}">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <icon:PackIconPhosphorIcons
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -213,8 +211,8 @@
 
                 <Button
         x:Name="btnRamClear"
-        Grid.Row="3"
-        Margin="15,10"
+        Grid.Column="0"
+        Height="38"
         hc:IconElement.Geometry="{x:Null}"
         Click="btnRamClear_Click"
         Style="{StaticResource ButtonPrimary}">
