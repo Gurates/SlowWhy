@@ -7,7 +7,7 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <hc:ThemeResources RequestedTheme="Dark" />
+        <hc:ThemeResources UsingSystemTheme="True" />
         <hc:Theme />
         <ResourceDictionary Source="src/Styles/DataGridStyles.xaml" />
         <ResourceDictionary Source="src/Styles/ButtonStyles.xaml" />
