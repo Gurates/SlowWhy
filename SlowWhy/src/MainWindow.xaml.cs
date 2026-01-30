@@ -4,7 +4,9 @@ using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
+using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows.Threading;
 using HandyControl.Themes;
 using LibreHardwareMonitor.Hardware;
@@ -23,6 +25,11 @@ namespace SlowWhy
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
 
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +45,8 @@ namespace SlowWhy
                 IsControllerEnabled = true,
             };
             _computer.Open();
+
+            Loaded += (_, _) => SetDarkMode(ThemeManager.Current.ApplicationTheme == ApplicationTheme.Dark);
 
             Closed += (_, _) =>
             {
@@ -230,11 +239,23 @@ namespace SlowWhy
             {
                 tm.ApplicationTheme = ApplicationTheme.Light;
                 menuTheme.Header = "Use Dark Theme";
+                SetDarkMode(false);
             }
             else
             {
                 tm.ApplicationTheme = ApplicationTheme.Dark;
                 menuTheme.Header = "Use Light Theme";
+                SetDarkMode(true);
+            }
+        }
+
+        private void SetDarkMode(bool isDark)
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd != IntPtr.Zero)
+            {
+                int value = isDark ? 1 : 0;
+                DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, sizeof(int));
             }
         }
 

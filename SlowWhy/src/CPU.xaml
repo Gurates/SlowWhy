@@ -98,10 +98,12 @@
         x:Name="dgProcesses"
         Grid.Row="1"
         AutoGenerateColumns="False"
+        GridLinesVisibility="Vertical"
         HeadersVisibility="Column"
         IsReadOnly="True"
         RowStyle="{StaticResource CustomDataGridRowStyle}"
-        Style="{StaticResource DataGrid.Small}">
+        Style="{StaticResource DataGrid.Small}"
+        VerticalGridLinesBrush="{DynamicResource SecondaryRegionBrush}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="2*"

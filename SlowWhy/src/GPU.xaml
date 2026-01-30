@@ -49,7 +49,7 @@
             Height="16"
             VerticalAlignment="Center"
             Foreground="{DynamicResource WarningBrush}"
-            Kind="Monitor" />
+            Kind="GraphicsCard" />
           <TextBlock
             Margin="6,0,0,0"
             VerticalAlignment="Center"
