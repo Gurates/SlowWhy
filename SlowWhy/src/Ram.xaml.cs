@@ -109,6 +109,17 @@ namespace SlowWhy
 
             if (result == MessageBoxResult.No) return;
 
+            if (selectedLevel == CleaningLevel.Aggressive)
+            {
+                var result1 = MessageBox.Show(
+                $"\n\nIn aggressive mode, your recycling bin will be cleaned.",
+                "Confirm",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+                if (result1 == MessageBoxResult.No) return;
+            }
+
             btnRamClear.IsEnabled = false;
 
             float ramBefore = _ramCounter.NextValue();
