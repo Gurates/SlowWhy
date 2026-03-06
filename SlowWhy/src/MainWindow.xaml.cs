@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
-using MessageBox = HandyControl.Controls.MessageBox;
 using System.Windows.Threading;
 using HandyControl.Themes;
 using LibreHardwareMonitor.Hardware;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace SlowWhy
 {
@@ -21,12 +21,14 @@ namespace SlowWhy
         private Computer _computer;
         private double _freeSpaceGb;
         private float _ramValueMb;
+        private DesktopWidget? _widget;
 
         [DllImport("psapi.dll")]
         public static extern int EmptyWorkingSet(IntPtr hwProc);
 
         [DllImport("dwmapi.dll")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr,
+            ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 
@@ -46,22 +48,22 @@ namespace SlowWhy
             };
             _computer.Open();
 
-            Loaded += (_, _) => SetDarkMode(ThemeManager.Current.ApplicationTheme == ApplicationTheme.Dark);
+            Loaded += (_, _) =>
+                SetDarkMode(ThemeManager.Current.ApplicationTheme == ApplicationTheme.Dark);
 
             Closed += (_, _) =>
             {
                 _timer.Stop();
                 _computer.Close();
+                _widget?.Close();
             };
         }
-
         private void InitializeMonitoring()
         {
             try
             {
                 _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
                 _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-
                 _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
                 _timer.Tick += OnTimerTick;
             }
@@ -72,23 +74,18 @@ namespace SlowWhy
         {
             try
             {
-                using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
+                using var searcher = new ManagementObjectSearcher(
+                    "SELECT Name FROM Win32_VideoController");
                 foreach (ManagementObject mo in searcher.Get())
                 {
                     txtGpu.Text = mo["Name"]?.ToString() ?? "Unknown";
                     break;
                 }
             }
-            catch
-            {
-                txtGpu.Text = "Not Detected";
-            }
+            catch { txtGpu.Text = "Not Detected"; }
         }
 
-        private void StartMonitoring()
-        {
-            _timer.Start();
-        }
+        private void StartMonitoring() => _timer.Start();
 
         private void OnTimerTick(object sender, EventArgs e)
         {
@@ -114,107 +111,72 @@ namespace SlowWhy
             txtRam.Foreground = _ramValueMb < 3072 ? Brushes.Red : _ramValueMb < 4096 ? Brushes.Orange : Brushes.Green;
         }
 
+        private void MenuWidget_Click(object sender, RoutedEventArgs e)
+        {
+            if (_widget == null || !_widget.IsVisible)
+            {
+                _widget = new DesktopWidget();
+                _widget.Show();
+                menuWidget.Header = "Hide Widget";
+            }
+            else
+            {
+                _widget.Close();
+                _widget = null;
+                menuWidget.Header = "Show Widget";
+            }
+        }
+
         private void btnRamClear_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                $"\n\nAre you sure you want to continue?",
-                "Confirm Quic RAM Cleaning",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
+                "\n\nAre you sure you want to continue?",
+                "Confirm Quick RAM Cleaning",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.No) return;
 
             float ramBefore = _ramValueMb;
-
             Dispatcher.InvokeAsync(() =>
             {
                 foreach (var p in Process.GetProcesses())
-                {
                     try { if (!p.HasExited) EmptyWorkingSet(p.Handle); } catch { }
-                }
 
                 float ramAfter = _ramCounter.NextValue();
                 float diffGb = (ramAfter - ramBefore) / 1024f;
-                MessageBox.Show($"{diffGb:F2} GB Evacuated", "Quick Clean", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"{diffGb:F2} GB Evacuated", "Quick Clean",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             });
-        }
-
-        private void clearTempFolder()
-        {
-            string tempFolder = System.IO.Path.GetTempPath();
-
-            string[] files = Directory.GetFiles(tempFolder);
-
-            foreach (string filePath in files)
-            {
-                try
-                {
-                    File.Delete(filePath);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-        }
-
-        private void clearTempFolder1()
-        {
-            string systemTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp");
-
-            string[] files = Directory.GetFiles(systemTemp);
-
-            foreach (string filePath in files)
-            {
-                try
-                {
-                    File.Delete(filePath);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-        }
-
-        private void clearPrefetch()
-        {
-            string prefetchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Prefetch");
-
-            string[] files = Directory.GetFiles(prefetchPath);
-
-            foreach (string filePath in files)
-            {
-                try
-                {
-                    File.Delete(filePath);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
         }
 
         private void btnFileClear_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                $"\n\nIf you approve, your %temp% temp and prefetch folders will be cleared.",
+                "\n\nIf you approve, your %temp%, Windows Temp and Prefetch folders will be cleared.",
                 "Confirm Junk Files Cleaning",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.No) return;
 
-            clearTempFolder();
-            clearTempFolder1();
-            clearPrefetch();
+            ClearFolder(System.IO.Path.GetTempPath());
+            ClearFolder(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"));
+            ClearFolder(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Prefetch"));
         }
 
-        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new CPU());
-        private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new Ram());
-        private void GPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new GPU());
-        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => NavigateTo(new Disk());
+        private static void ClearFolder(string path)
+        {
+            foreach (var f in Directory.GetFiles(path))
+                try { File.Delete(f); } catch { }
+        }
+
+        private void CPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+            => NavigateTo(new CPU());
+        private void Ram_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+            => NavigateTo(new Ram());
+        private void GPU_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+            => NavigateTo(new GPU());
+        private void DiskCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+            => NavigateTo(new Disk());
 
         private void NavigateTo(System.Windows.Controls.UserControl page)
         {
@@ -223,7 +185,9 @@ namespace SlowWhy
             PagesContainer.Content = page;
         }
 
-        private void MenuExit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+        //Menu
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
+            => Application.Current.Shutdown();
 
         private void MenuDashboard_Click(object sender, RoutedEventArgs e)
         {
@@ -252,31 +216,27 @@ namespace SlowWhy
         private void SetDarkMode(bool isDark)
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            if (hwnd != IntPtr.Zero)
-            {
-                int value = isDark ? 1 : 0;
-                DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, sizeof(int));
-            }
+            if (hwnd == IntPtr.Zero) return;
+            int value = isDark ? 1 : 0;
+            DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, sizeof(int));
         }
 
-        private void MenuAbout_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("SlowWhy - System Monitor & Optimizer", "About", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+        private void MenuAbout_Click(object sender, RoutedEventArgs e) =>
+            MessageBox.Show("SlowWhy - System Monitor & Optimizer", "About",
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadStaticInfo();
-            MessageBox.Show("System data refreshed!", "Refresh", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("System data refreshed!", "Refresh",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void MenuGithub_Click(object sender, RoutedEventArgs e)
-        {
+        private void MenuGithub_Click(object sender, RoutedEventArgs e) =>
             Process.Start(new ProcessStartInfo
             {
                 FileName = "https://github.com/Gurates/SlowWhy",
                 UseShellExecute = true
             });
-        }
     }
 }

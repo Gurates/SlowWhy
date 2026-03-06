@@ -1,0 +1,160 @@
+﻿<Window
+  x:Class="SlowWhy.DesktopWidget"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="220"
+  WindowStyle="None"
+  AllowsTransparency="True"
+  Background="Transparent"
+  ShowInTaskbar="False"
+  Topmost="True"
+  ResizeMode="NoResize"
+  SizeToContent="Height">
+
+    <Border
+    CornerRadius="12"
+    Background="#D20E0E16"
+    BorderBrush="#37FFFFFF"
+    BorderThickness="1">
+
+        <Border.Effect>
+            <DropShadowEffect
+        Color="Black"
+        BlurRadius="18"
+        ShadowDepth="3"
+        Opacity="0.6" />
+        </Border.Effect>
+
+        <StackPanel Margin="14,12,14,14">
+
+            <Grid Margin="0,0,0,10">
+                <TextBlock
+          Text="System Monitor"
+          FontSize="10"
+          FontWeight="Bold"
+          Foreground="#B089B4FA"
+          VerticalAlignment="Center" />
+                <Button
+          x:Name="btnClose"
+          Content="✕"
+          FontSize="9"
+          Width="16"
+          Height="16"
+          HorizontalAlignment="Right"
+          VerticalAlignment="Center"
+          Background="Transparent"
+          BorderBrush="Transparent"
+          Foreground="#78C8C8C8"
+          Cursor="Hand"
+          Padding="0"
+          Click="btnClose_Click" />
+            </Grid>
+
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="34" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="36" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+          Grid.Column="0"
+          Text="CPU"
+          FontSize="9"
+          FontWeight="SemiBold"
+          Foreground="#A0C8D2E8"
+          VerticalAlignment="Center" />
+                <ProgressBar
+          x:Name="pbCpu"
+          Grid.Column="1"
+          Height="5"
+          Maximum="100"
+          Value="0"
+          Background="#3CFFFFFF"
+          Foreground="#89B4FA"
+          BorderThickness="0"
+          VerticalAlignment="Center"
+          Margin="4,0" />
+                <TextBlock
+          x:Name="lblCpu"
+          Grid.Column="2"
+          Text="0%"
+          FontSize="10"
+          FontWeight="Bold"
+          Foreground="#89B4FA"
+          TextAlignment="Right"
+          VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="34" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="36" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+          Grid.Column="0"
+          Text="RAM"
+          FontSize="9"
+          FontWeight="SemiBold"
+          Foreground="#A0C8D2E8"
+          VerticalAlignment="Center" />
+                <ProgressBar
+          x:Name="pbRam"
+          Grid.Column="1"
+          Height="5"
+          Maximum="100"
+          Value="0"
+          Background="#3CFFFFFF"
+          Foreground="#A6E3A1"
+          BorderThickness="0"
+          VerticalAlignment="Center"
+          Margin="4,0" />
+                <TextBlock
+          x:Name="lblRam"
+          Grid.Column="2"
+          Text="0%"
+          FontSize="10"
+          FontWeight="Bold"
+          Foreground="#A6E3A1"
+          TextAlignment="Right"
+          VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="34" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="36" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+          Grid.Column="0"
+          Text="GPU"
+          FontSize="9"
+          FontWeight="SemiBold"
+          Foreground="#A0C8D2E8"
+          VerticalAlignment="Center" />
+                <ProgressBar
+          x:Name="pbGpu"
+          Grid.Column="1"
+          Height="5"
+          Maximum="100"
+          Value="0"
+          Background="#3CFFFFFF"
+          Foreground="#FAB387"
+          BorderThickness="0"
+          VerticalAlignment="Center"
+          Margin="4,0" />
+                <TextBlock
+          x:Name="lblGpu"
+          Grid.Column="2"
+          Text="0%"
+          FontSize="10"
+          FontWeight="Bold"
+          Foreground="#FAB387"
+          TextAlignment="Right"
+          VerticalAlignment="Center" />
+            </Grid>
+
+        </StackPanel>
+    </Border>
+</Window>

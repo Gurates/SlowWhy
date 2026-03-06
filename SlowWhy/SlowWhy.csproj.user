@@ -3,5 +3,9 @@
   <PropertyGroup>
     <_LastSelectedProfileId>C:\Users\efegu\OneDrive\Masaüstü\Projects\Slow_Why\SlowWhy\SlowWhy\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Update="src\Desktopwidget.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
